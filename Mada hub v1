@@ -73,7 +73,7 @@ MyButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 MyButton.Position = UDim2.new(0.5, -45, 0.5, -65)
 MyButton.Size = UDim2.new(0, 100, 0, 30)
 MyButton.Font = Enum.Font.SourceSans
-MyButton.Text = "Infinite Yield Reborn"
+MyButton.Text = "Infinite Yield Rbrn"
 MyButton.TextColor3 = Color3.new(1, 1, 1)
 MyButton.TextSize = 16
 
