@@ -1,3 +1,6 @@
+-- Made by z4trox 
+-- discord.gg/a8DhGKRNEq
+
 local gui = Instance.new("ScreenGui")
 gui.Parent = game.Players.LocalPlayer.PlayerGui
 
