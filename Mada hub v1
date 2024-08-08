@@ -22,6 +22,18 @@ TitleLabel.Text = "Mada hub"
 TitleLabel.TextColor3 = Color3.new(1, 1, 1)
 TitleLabel.TextSize = 16
 
+-- Ajouter d'autres éléments au GUI, comme des TextLabels, des TextButtons, des Images, etc.
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TitleLabel.Size = UDim2.new(1, 0, 0, 30)
+TitleLabel.Position = UDim2.new(0, 0, 0, 200)
+TitleLabel.Font = Enum.Font.SourceSans
+TitleLabel.Text = "discord.gg/a8DhGKRNEq"
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.TextSize = 16
+
 -- Créer un TabContainer pour contenir les onglets
 local TabContainer = Instance.new("Frame")
 TabContainer.Name = "TabContainer"
@@ -127,17 +139,3 @@ ToggleVisibilityButton.Draggable = true
 ToggleVisibilityButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = not MainFrame.Visible
 end)
-
-wait(1)
-
-local players = game:GetService("Players")
-game.StarterGui:SetCore("SendNotification", {
-
-    Title = "Join server discord :D";
-
-    Text = "discord.gg/a8DhGKRNEq";
-     
-     Icon = "";
-
-     Duration = 5
-})
