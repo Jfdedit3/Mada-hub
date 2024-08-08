@@ -96,6 +96,21 @@ MyButton.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/toyahfur/Nameless-Admin-2.0/main/unfinished-source-code'))()
 end)
 
+local MyButton = Instance.new("TextButton")
+MyButton.Name = "MyButton"
+MyButton.Parent = MainFrame
+MyButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MyButton.Position = UDim2.new(0.5, -45, 0.5, -15)
+MyButton.Size = UDim2.new(0, 100, 0, 30)
+MyButton.Font = Enum.Font.SourceSans
+MyButton.Text = "CMD FE"
+MyButton.TextColor3 = Color3.new(1, 1, 1)
+MyButton.TextSize = 16
+
+MyButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"))()
+end)
+
 local ToggleVisibilityButton = Instance.new("TextButton")
 ToggleVisibilityButton.Name = "ToggleVisibilityButton"
 ToggleVisibilityButton.Parent = ScreenGui
