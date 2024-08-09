@@ -11,6 +11,13 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
 MainFrame.Size = UDim2.new(0, 300, 0, 200)
 
+-- local sound
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://3673835822"
+sound.Looped = false
+sound.Parent = workspace
+sound:Play()
+
 -- Ajouter d'autres éléments au GUI, comme des TextLabels, des TextButtons, des Images, etc.
 local TitleLabel = Instance.new("TextLabel")
 TitleLabel.Name = "TitleLabel"
