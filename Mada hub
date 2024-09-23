@@ -36,10 +36,9 @@ end
 ScreenGui.Name = "MyScreenGui"
 ScreenGui.Parent = game.CoreGui
 
--- Agrandir le MainFrame pour plus de boutons
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
 MainFrame.Size = UDim2.new(0, 400, 0, 300)
 MainFrame.BackgroundTransparency = 0.1
@@ -47,10 +46,10 @@ applyCorners(MainFrame, 12)
 
 TitleLabel.Name = "TitleLabel"
 TitleLabel.Parent = MainFrame
-TitleLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleLabel.Size = UDim2.new(1, 0, 0, 30)
 TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Text = "Mada hub v3"  -- Changement du titre
+TitleLabel.Text = "Mada hub v3"
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.TextSize = 16
 applyCorners(TitleLabel, 10)
@@ -66,77 +65,82 @@ CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseButton.TextSize = 14
 applyCorners(CloseButton, 5)
 
--- Fonction pour fermer le GUI
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- Conteneur de boutons
 ButtonContainer.Name = "ButtonContainer"
 ButtonContainer.Parent = MainFrame
-ButtonContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ButtonContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
 ButtonContainer.Size = UDim2.new(1, 0, 1, -30)
 applyCorners(ButtonContainer, 10)
+
+-- Tableau des boutons
+local buttons = {
+    {text = "KOLINSKI admin", url = "https://raw.githubusercontent.com/Jfdedit3/KOLINSKI/refs/heads/main/KOLINSKI.lua"},
+    {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
+    {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
+    {text = "Nameless Hub", url = "https://raw.githubusercontent.com/Jfdedit3/Mada-hub/main/Nameless%20hub"},
+    {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"}
+}
 
 -- Fonction pour créer un bouton stylisé
 local function createButton(text, url, position)
     local button = Instance.new("TextButton")
     button.Name = text
     button.Parent = ButtonContainer
-    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     button.Position = UDim2.new(0, 10, 0, position)
     button.Size = UDim2.new(1, -20, 0, 40)
     button.Font = Enum.Font.Gotham
     button.Text = text
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
     button.TextSize = 14
-
-    -- Application des coins arrondis aux boutons
     applyCorners(button, 8)
 
-    -- Interaction avec le bouton
     button.MouseButton1Click:Connect(function()
         createNotification(text, text .. " is executing.", 3)
 
-        -- Mesurer le temps d'exécution
-        local startTime = tick() -- Début de l'exécution
-        local success, err = pcall(function()
-            loadstring(game:HttpGet(url, true))()
-        end)
-        local endTime = tick() -- Fin de l'exécution
-        local executionTime = endTime - startTime -- Calcul du temps d'exécution
+        if not url:match("^https://raw.githubusercontent.com/") then
+            createNotification("Error", "Invalid script URL.", 5)
+            return
+        end
 
-        -- Si le script est exécuté avec succès
-        if success then
+        local success, err = pcall(function()
+            local startTime = tick() -- Début de l'exécution
+            local scriptCode = game:HttpGet(url, true)
+            if not scriptCode then
+                error("Failed to download script.")
+            end
+            loadstring(scriptCode)()
+            local endTime = tick() -- Fin de l'exécution
+            local executionTime = endTime - startTime -- Temps d'exécution
+
             createNotification("Success", text .. " executed in " .. string.format("%.2f", executionTime) .. " seconds.", 5)
-        else
+        end)
+
+        if not success then
             createNotification("Error", "Failed to execute: " .. err, 5)
         end
     end)
 
-    -- Interaction de survol du bouton
     button.MouseEnter:Connect(function()
         button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
     end)
     button.MouseLeave:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     end)
 end
 
--- Créer les boutons avec un espacement uniforme
-createButton("KOLINSKI admin", "https://raw.githubusercontent.com/Jfdedit3/KOLINSKI/refs/heads/main/KOLINSKI.lua", 10)
-createButton("Cmd Fe", "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua", 60)
-createButton("Honoka Executor", "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox", 110)
-createButton("Nameless Hub", "https://raw.githubusercontent.com/Jfdedit3/Mada-hub/main/Nameless%20hub", 160)
+-- Créer les boutons dynamiquement à partir du tableau
+for index, buttonInfo in ipairs(buttons) do
+    createButton(buttonInfo.text, buttonInfo.url, (index - 1) * 50)
+end
 
--- Ajout du bouton "Velocity Ware"
-createButton("Velocity Ware", "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua", 210)
-
--- Bouton de basculement de visibilité du GUI
 ToggleVisibilityButton.Name = "ToggleVisibilityButton"
 ToggleVisibilityButton.Parent = ScreenGui
-ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 ToggleVisibilityButton.Position = UDim2.new(0.5, -50, 0.35, -150)
 ToggleVisibilityButton.Size = UDim2.new(0, 135, 0, 30)
 ToggleVisibilityButton.Font = Enum.Font.Gotham
@@ -145,12 +149,10 @@ ToggleVisibilityButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleVisibilityButton.TextSize = 14
 applyCorners(ToggleVisibilityButton, 10)
 
--- Fonction pour basculer l'affichage du MainFrame
 local function toggleMainFrame()
     MainFrame.Visible = not MainFrame.Visible
 end
 
 ToggleVisibilityButton.MouseButton1Click:Connect(toggleMainFrame)
 
--- Créer la première notification
 createNotification("HELLO!", "Welcome to Mada hub v3", 5)
