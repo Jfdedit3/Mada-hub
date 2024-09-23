@@ -1,8 +1,8 @@
--- Regroupement des variables locales
+-- Chargement de la bibliothèque de notifications
 local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
 
 if not NotificationLoad then
-    error("Notification library failed to load.")
+    error("La bibliothèque de notifications a échoué à se charger.")
 end
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -10,8 +10,8 @@ local MainFrame = Instance.new("Frame")
 local TitleLabel = Instance.new("TextLabel")
 local CloseButton = Instance.new("TextButton")
 local ButtonContainer = Instance.new("Frame")
-local ToggleVisibilityButton = Instance.new("TextButton")
 local FooterLabel = Instance.new("TextLabel")
+local ToggleVisibilityButton = Instance.new("TextButton")
 
 -- Fonction de notification
 local function createNotification(title, description, timeout)
@@ -33,7 +33,7 @@ local function applyCorners(instance, cornerRadius)
     corner.Parent = instance
 end
 
--- Créer l'interface utilisateur
+-- Création de l'interface utilisateur
 ScreenGui.Name = "MyScreenGui"
 ScreenGui.Parent = game.CoreGui
 
@@ -74,7 +74,7 @@ ButtonContainer.Name = "ButtonContainer"
 ButtonContainer.Parent = MainFrame
 ButtonContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
-ButtonContainer.Size = UDim2.new(1, 0, 1, -70) -- Ajuster la hauteur pour laisser de la place au footer
+ButtonContainer.Size = UDim2.new(1, 0, 1, -70)
 applyCorners(ButtonContainer, 10)
 
 -- Tableau des boutons
@@ -83,17 +83,18 @@ local buttons = {
     {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
     {text = "Nameless Hub", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
-    {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"}
+    {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"},
+    {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"} -- Nouveau bouton avec le nouveau texte
 }
 
--- Fonction pour créer un bouton stylisé (taille 2 fois plus petite)
+-- Fonction pour créer un bouton stylisé
 local function createButton(text, url, position)
     local button = Instance.new("TextButton")
     button.Name = text
     button.Parent = ButtonContainer
     button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     button.Position = UDim2.new(0, 10, 0, position)
-    button.Size = UDim2.new(1, -20, 0, 20)  -- Réduire la hauteur du bouton à 20
+    button.Size = UDim2.new(1, -20, 0, 20)
     button.Font = Enum.Font.Gotham
     button.Text = text
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -101,28 +102,28 @@ local function createButton(text, url, position)
     applyCorners(button, 8)
 
     button.MouseButton1Click:Connect(function()
-        createNotification(text, text .. " is executing.", 3)
+        createNotification(text, text .. " est en cours d'exécution.", 3)
 
         if not url:match("^https://raw.githubusercontent.com/") then
-            createNotification("Error", "Invalid script URL.", 5)
+            createNotification("Erreur", "URL du script invalide.", 5)
             return
         end
 
         local success, err = pcall(function()
-            local startTime = tick() -- Début de l'exécution
+            local startTime = tick()
             local scriptCode = game:HttpGet(url, true)
             if not scriptCode then
-                error("Failed to download script.")
+                error("Échec du téléchargement du script.")
             end
             loadstring(scriptCode)()
-            local endTime = tick() -- Fin de l'exécution
-            local executionTime = endTime - startTime -- Temps d'exécution
+            local endTime = tick()
+            local executionTime = endTime - startTime
 
-            createNotification("Success", text .. " executed in " .. string.format("%.2f", executionTime) .. " seconds.", 5)
+            createNotification("Succès", text .. " exécuté en " .. string.format("%.2f", executionTime) .. " secondes.", 5)
         end)
 
         if not success then
-            createNotification("Error", "Failed to execute: " .. err, 5)
+            createNotification("Erreur", "Échec de l'exécution : " .. err, 5)
         end
     end)
 
@@ -134,16 +135,16 @@ local function createButton(text, url, position)
     end)
 end
 
--- Créer les boutons dynamiquement à partir du tableau, avec un espacement adapté
+-- Créer les boutons dynamiquement
 for index, buttonInfo in ipairs(buttons) do
-    createButton(buttonInfo.text, buttonInfo.url, (index - 1) * 25)  -- Réduire l'espacement entre les boutons
+    createButton(buttonInfo.text, buttonInfo.url, (index - 1) * 25)
 end
 
 -- Ajouter le texte de footer
 FooterLabel.Name = "FooterLabel"
 FooterLabel.Parent = MainFrame
 FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-FooterLabel.Position = UDim2.new(0, 10, 1, -30) -- Position en bas du MainFrame
+FooterLabel.Position = UDim2.new(0, 10, 1, -30)
 FooterLabel.Size = UDim2.new(1, -20, 0, 30)
 FooterLabel.Font = Enum.Font.GothamBold
 FooterLabel.Text = "z4trox - Version 3.0 | https://discord.gg/a8DhGKRNEq"
@@ -157,7 +158,7 @@ ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 ToggleVisibilityButton.Position = UDim2.new(0.5, -50, 0.35, -150)
 ToggleVisibilityButton.Size = UDim2.new(0, 135, 0, 30)
 ToggleVisibilityButton.Font = Enum.Font.Gotham
-ToggleVisibilityButton.Text = "Toggle UI"
+ToggleVisibilityButton.Text = "Basculer l'UI"
 ToggleVisibilityButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleVisibilityButton.TextSize = 14
 applyCorners(ToggleVisibilityButton, 10)
@@ -168,4 +169,4 @@ end
 
 ToggleVisibilityButton.MouseButton1Click:Connect(toggleMainFrame)
 
-createNotification("HELLO!", "Welcome to Mada hub v3", 5)
+createNotification("HELLO!", "Bienvenue dans Mada hub v3", 5)
