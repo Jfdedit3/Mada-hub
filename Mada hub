@@ -1,0 +1,156 @@
+-- Regroupement des variables locales
+local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
+
+if not NotificationLoad then
+    error("Notification library failed to load.")
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local TitleLabel = Instance.new("TextLabel")
+local CloseButton = Instance.new("TextButton")
+local ButtonContainer = Instance.new("Frame")
+local ToggleVisibilityButton = Instance.new("TextButton")
+
+-- Fonction de notification
+local function createNotification(title, description, timeout)
+    NotificationLoad:NewNotification({
+        ["Mode"] = "Custom",
+        ["Title"] = title,
+        ["Description"] = description,
+        ["Notification_Image"] = "rbxassetid://",
+        ["Notification_Sound"] = "rbxassetid://6031098704",
+        ["Timeout"] = timeout or 5,
+        ["Audio"] = true
+    })
+end
+
+-- Fonction pour appliquer des coins arrondis
+local function applyCorners(instance, cornerRadius)
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, cornerRadius)
+    corner.Parent = instance
+end
+
+-- Créer l'interface utilisateur
+ScreenGui.Name = "MyScreenGui"
+ScreenGui.Parent = game.CoreGui
+
+-- Agrandir le MainFrame pour plus de boutons
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 400, 0, 300)
+MainFrame.BackgroundTransparency = 0.1
+applyCorners(MainFrame, 12)
+
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+TitleLabel.Size = UDim2.new(1, 0, 0, 30)
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Text = "Mada hub v3"  -- Changement du titre
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 16
+applyCorners(TitleLabel, 10)
+
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = MainFrame
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+CloseButton.Position = UDim2.new(0.95, -20, 0, 5)
+CloseButton.Size = UDim2.new(0, 20, 0, 20)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.TextSize = 14
+applyCorners(CloseButton, 5)
+
+-- Fonction pour fermer le GUI
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+-- Conteneur de boutons
+ButtonContainer.Name = "ButtonContainer"
+ButtonContainer.Parent = MainFrame
+ButtonContainer.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
+ButtonContainer.Size = UDim2.new(1, 0, 1, -30)
+applyCorners(ButtonContainer, 10)
+
+-- Fonction pour créer un bouton stylisé
+local function createButton(text, url, position)
+    local button = Instance.new("TextButton")
+    button.Name = text
+    button.Parent = ButtonContainer
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    button.Position = UDim2.new(0, 10, 0, position)
+    button.Size = UDim2.new(1, -20, 0, 40)
+    button.Font = Enum.Font.Gotham
+    button.Text = text
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.TextSize = 14
+
+    -- Application des coins arrondis aux boutons
+    applyCorners(button, 8)
+
+    -- Interaction avec le bouton
+    button.MouseButton1Click:Connect(function()
+        createNotification(text, text .. " is executing.", 3)
+
+        -- Mesurer le temps d'exécution
+        local startTime = tick() -- Début de l'exécution
+        local success, err = pcall(function()
+            loadstring(game:HttpGet(url, true))()
+        end)
+        local endTime = tick() -- Fin de l'exécution
+        local executionTime = endTime - startTime -- Calcul du temps d'exécution
+
+        -- Si le script est exécuté avec succès
+        if success then
+            createNotification("Success", text .. " executed in " .. string.format("%.2f", executionTime) .. " seconds.", 5)
+        else
+            createNotification("Error", "Failed to execute: " .. err, 5)
+        end
+    end)
+
+    -- Interaction de survol du bouton
+    button.MouseEnter:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    end)
+    button.MouseLeave:Connect(function()
+        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    end)
+end
+
+-- Créer les boutons avec un espacement uniforme
+createButton("KOLINSKI admin", "https://raw.githubusercontent.com/Jfdedit3/KOLINSKI/refs/heads/main/KOLINSKI.lua", 10)
+createButton("Cmd Fe", "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua", 60)
+createButton("Honoka Executor", "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox", 110)
+createButton("Nameless Hub", "https://raw.githubusercontent.com/Jfdedit3/Mada-hub/main/Nameless%20hub", 160)
+
+-- Ajout du bouton "Velocity Ware"
+createButton("Velocity Ware", "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua", 210)
+
+-- Bouton de basculement de visibilité du GUI
+ToggleVisibilityButton.Name = "ToggleVisibilityButton"
+ToggleVisibilityButton.Parent = ScreenGui
+ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ToggleVisibilityButton.Position = UDim2.new(0.5, -50, 0.35, -150)
+ToggleVisibilityButton.Size = UDim2.new(0, 135, 0, 30)
+ToggleVisibilityButton.Font = Enum.Font.Gotham
+ToggleVisibilityButton.Text = "Toggle UI"
+ToggleVisibilityButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleVisibilityButton.TextSize = 14
+applyCorners(ToggleVisibilityButton, 10)
+
+-- Fonction pour basculer l'affichage du MainFrame
+local function toggleMainFrame()
+    MainFrame.Visible = not MainFrame.Visible
+end
+
+ToggleVisibilityButton.MouseButton1Click:Connect(toggleMainFrame)
+
+-- Créer la première notification
+createNotification("HELLO!", "Welcome to Mada hub v3", 5)
