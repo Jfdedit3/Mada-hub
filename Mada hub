@@ -11,6 +11,7 @@ local TitleLabel = Instance.new("TextLabel")
 local CloseButton = Instance.new("TextButton")
 local ButtonContainer = Instance.new("Frame")
 local ToggleVisibilityButton = Instance.new("TextButton")
+local FooterLabel = Instance.new("TextLabel")
 
 -- Fonction de notification
 local function createNotification(title, description, timeout)
@@ -73,7 +74,7 @@ ButtonContainer.Name = "ButtonContainer"
 ButtonContainer.Parent = MainFrame
 ButtonContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
-ButtonContainer.Size = UDim2.new(1, 0, 1, -30)
+ButtonContainer.Size = UDim2.new(1, 0, 1, -70) -- Ajuster la hauteur pour laisser de la place au footer
 applyCorners(ButtonContainer, 10)
 
 -- Tableau des boutons
@@ -85,14 +86,14 @@ local buttons = {
     {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"}
 }
 
--- Fonction pour créer un bouton stylisé
+-- Fonction pour créer un bouton stylisé (taille 2 fois plus petite)
 local function createButton(text, url, position)
     local button = Instance.new("TextButton")
     button.Name = text
     button.Parent = ButtonContainer
     button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     button.Position = UDim2.new(0, 10, 0, position)
-    button.Size = UDim2.new(1, -20, 0, 40)
+    button.Size = UDim2.new(1, -20, 0, 20)  -- Réduire la hauteur du bouton à 20
     button.Font = Enum.Font.Gotham
     button.Text = text
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -133,10 +134,22 @@ local function createButton(text, url, position)
     end)
 end
 
--- Créer les boutons dynamiquement à partir du tableau
+-- Créer les boutons dynamiquement à partir du tableau, avec un espacement adapté
 for index, buttonInfo in ipairs(buttons) do
-    createButton(buttonInfo.text, buttonInfo.url, (index - 1) * 50)
+    createButton(buttonInfo.text, buttonInfo.url, (index - 1) * 25)  -- Réduire l'espacement entre les boutons
 end
+
+-- Ajouter le texte de footer
+FooterLabel.Name = "FooterLabel"
+FooterLabel.Parent = MainFrame
+FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+FooterLabel.Position = UDim2.new(0, 10, 1, -30) -- Position en bas du MainFrame
+FooterLabel.Size = UDim2.new(1, -20, 0, 30)
+FooterLabel.Font = Enum.Font.GothamBold
+FooterLabel.Text = "z4trox - Version 3.0 | https://discord.gg/a8DhGKRNEq"
+FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+FooterLabel.TextSize = 12
+applyCorners(FooterLabel, 8)
 
 ToggleVisibilityButton.Name = "ToggleVisibilityButton"
 ToggleVisibilityButton.Parent = ScreenGui
