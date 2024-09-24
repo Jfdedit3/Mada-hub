@@ -169,4 +169,4 @@ end
 
 ToggleVisibilityButton.MouseButton1Click:Connect(toggleMainFrame)
 
-createNotification("HELLO!", "Bienvenue dans Mada hub v3", 5)
+createNotification("HELLO!", "Welcome to Mada hub v3", 5)
