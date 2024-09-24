@@ -50,7 +50,7 @@ TitleLabel.Parent = MainFrame
 TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleLabel.Size = UDim2.new(1, 0, 0, 30)
 TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Text = "Mada hub v3"
+TitleLabel.Text = "Mada hub v3.1"  -- Updated version
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.TextSize = 16
 applyCorners(TitleLabel, 10)
@@ -140,6 +140,53 @@ for index, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo.text, buttonInfo.url, (index - 1) * 25)
 end
 
+-- Add textbox and execute button for custom scripts
+local ScriptTextBox = Instance.new("TextBox")
+local ExecuteButton = Instance.new("TextButton")
+
+-- TextBox settings
+ScriptTextBox.Name = "ScriptTextBox"
+ScriptTextBox.Parent = ButtonContainer
+ScriptTextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+ScriptTextBox.Position = UDim2.new(0, 10, 0, #buttons * 25)  -- Positioned just after last button
+ScriptTextBox.Size = UDim2.new(0.7, -20, 0, 20)
+ScriptTextBox.Font = Enum.Font.Gotham
+ScriptTextBox.PlaceholderText = "Enter script"
+ScriptTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+ScriptTextBox.TextSize = 14
+ScriptTextBox.TextWrapped = true  -- Prevent text overflow
+applyCorners(ScriptTextBox, 8)  -- Apply rounded corners
+
+-- ExecuteButton settings
+ExecuteButton.Name = "ExecuteButton"
+ExecuteButton.Parent = ButtonContainer
+ExecuteButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ExecuteButton.Position = UDim2.new(0.7, 10, 0, #buttons * 25)  -- Positioned next to the TextBox
+ExecuteButton.Size = UDim2.new(0.25, -20, 0, 20)
+ExecuteButton.Font = Enum.Font.Gotham
+ExecuteButton.Text = "Run"
+ExecuteButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExecuteButton.TextSize = 14
+applyCorners(ExecuteButton, 8)
+
+-- Execute script from TextBox
+ExecuteButton.MouseButton1Click:Connect(function()
+    local scriptText = ScriptTextBox.Text
+    if scriptText and scriptText ~= "" then
+        createNotification("Script", "Running your script...", 3)
+        local success, err = pcall(function()
+            loadstring(scriptText)()
+        end)
+        if not success then
+            createNotification("Error", "Failed to run script: " .. err, 5)
+        else
+            createNotification("Success", "Script executed successfully!", 5)
+        end
+    else
+        createNotification("Error", "No script entered.", 3)
+    end
+end)
+
 -- Add footer text
 FooterLabel.Name = "FooterLabel"
 FooterLabel.Parent = MainFrame
@@ -147,11 +194,13 @@ FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 FooterLabel.Position = UDim2.new(0, 10, 1, -30)
 FooterLabel.Size = UDim2.new(1, -20, 0, 30)
 FooterLabel.Font = Enum.Font.GothamBold
-FooterLabel.Text = "z4trox - Version 3.0 | https://discord.gg/a8DhGKRNEq"
+FooterLabel.Text = "z4trox - Version 3.1 | https://discord.gg/a8DhGKRNEq"
 FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FooterLabel.TextSize = 12
+FooterLabel.TextWrapped = true
 applyCorners(FooterLabel, 8)
 
+-- ToggleVisibilityButton settings
 ToggleVisibilityButton.Name = "ToggleVisibilityButton"
 ToggleVisibilityButton.Parent = ScreenGui
 ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
@@ -163,10 +212,12 @@ ToggleVisibilityButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleVisibilityButton.TextSize = 14
 applyCorners(ToggleVisibilityButton, 10)
 
+-- Function to toggle UI visibility
 local function toggleMainFrame()
     MainFrame.Visible = not MainFrame.Visible
 end
 
 ToggleVisibilityButton.MouseButton1Click:Connect(toggleMainFrame)
 
-createNotification("HELLO!", "Welcome to Mada hub v3", 5)
+-- Welcome notification
+createNotification("HELLO!", "Welcome to Mada hub v3.1", 5)
