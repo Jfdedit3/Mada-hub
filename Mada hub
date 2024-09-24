@@ -1,8 +1,8 @@
--- Chargement de la bibliothèque de notifications
+-- Loading the notification library
 local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
 
 if not NotificationLoad then
-    error("La bibliothèque de notifications a échoué à se charger.")
+    error("The notification library failed to load.")
 end
 
 local ScreenGui = Instance.new("ScreenGui")
@@ -13,7 +13,7 @@ local ButtonContainer = Instance.new("Frame")
 local FooterLabel = Instance.new("TextLabel")
 local ToggleVisibilityButton = Instance.new("TextButton")
 
--- Fonction de notification
+-- Notification function
 local function createNotification(title, description, timeout)
     NotificationLoad:NewNotification({
         ["Mode"] = "Custom",
@@ -26,14 +26,14 @@ local function createNotification(title, description, timeout)
     })
 end
 
--- Fonction pour appliquer des coins arrondis
+-- Function to apply rounded corners
 local function applyCorners(instance, cornerRadius)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, cornerRadius)
     corner.Parent = instance
 end
 
--- Création de l'interface utilisateur
+-- Creating the UI
 ScreenGui.Name = "MyScreenGui"
 ScreenGui.Parent = game.CoreGui
 
@@ -77,17 +77,17 @@ ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
 ButtonContainer.Size = UDim2.new(1, 0, 1, -70)
 applyCorners(ButtonContainer, 10)
 
--- Tableau des boutons
+-- Button array
 local buttons = {
     {text = "KOLINSKI admin", url = "https://raw.githubusercontent.com/Jfdedit3/KOLINSKI/refs/heads/main/KOLINSKI.lua"},
     {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
     {text = "Nameless Hub", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
     {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"},
-    {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"} -- Nouveau bouton avec le nouveau texte
+    {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"} -- New button with the new text
 }
 
--- Fonction pour créer un bouton stylisé
+-- Function to create a stylized button
 local function createButton(text, url, position)
     local button = Instance.new("TextButton")
     button.Name = text
@@ -102,10 +102,10 @@ local function createButton(text, url, position)
     applyCorners(button, 8)
 
     button.MouseButton1Click:Connect(function()
-        createNotification(text, text .. " est en cours d'exécution.", 3)
+        createNotification(text, text .. " is running.", 3)
 
         if not url:match("^https://raw.githubusercontent.com/") then
-            createNotification("Erreur", "URL du script invalide.", 5)
+            createNotification("Error", "Invalid script URL.", 5)
             return
         end
 
@@ -113,17 +113,17 @@ local function createButton(text, url, position)
             local startTime = tick()
             local scriptCode = game:HttpGet(url, true)
             if not scriptCode then
-                error("Échec du téléchargement du script.")
+                error("Failed to download the script.")
             end
             loadstring(scriptCode)()
             local endTime = tick()
             local executionTime = endTime - startTime
 
-            createNotification("Succès", text .. " exécuté en " .. string.format("%.2f", executionTime) .. " secondes.", 5)
+            createNotification("Success", text .. " executed in " .. string.format("%.2f", executionTime) .. " seconds.", 5)
         end)
 
         if not success then
-            createNotification("Erreur", "Échec de l'exécution : " .. err, 5)
+            createNotification("Error", "Failed to execute: " .. err, 5)
         end
     end)
 
@@ -135,12 +135,12 @@ local function createButton(text, url, position)
     end)
 end
 
--- Créer les boutons dynamiquement
+-- Create buttons dynamically
 for index, buttonInfo in ipairs(buttons) do
     createButton(buttonInfo.text, buttonInfo.url, (index - 1) * 25)
 end
 
--- Ajouter le texte de footer
+-- Add footer text
 FooterLabel.Name = "FooterLabel"
 FooterLabel.Parent = MainFrame
 FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -158,7 +158,7 @@ ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 ToggleVisibilityButton.Position = UDim2.new(0.5, -50, 0.35, -150)
 ToggleVisibilityButton.Size = UDim2.new(0, 135, 0, 30)
 ToggleVisibilityButton.Font = Enum.Font.Gotham
-ToggleVisibilityButton.Text = "Basculer l'UI"
+ToggleVisibilityButton.Text = "Toggle UI"
 ToggleVisibilityButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleVisibilityButton.TextSize = 14
 applyCorners(ToggleVisibilityButton, 10)
