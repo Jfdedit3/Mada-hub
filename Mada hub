@@ -22,7 +22,7 @@ local function createNotification(title, description, timeout)
         ["Notification_Image"] = "rbxassetid://",
         ["Notification_Sound"] = "rbxassetid://5020929359",
         ["Timeout"] = timeout or 5,
-        ["Audio"] = true
+        ["Audio"] = false 
     })
 end
 
