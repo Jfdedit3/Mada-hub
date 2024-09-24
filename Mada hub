@@ -50,7 +50,7 @@ TitleLabel.Parent = MainFrame
 TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleLabel.Size = UDim2.new(1, 0, 0, 30)
 TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Text = "Mada hub v3.1"  -- Updated version
+TitleLabel.Text = "Mada hub v3.1"
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.TextSize = 16
 applyCorners(TitleLabel, 10)
@@ -82,7 +82,6 @@ local buttons = {
     {text = "KOLINSKI admin", url = "https://raw.githubusercontent.com/Jfdedit3/KOLINSKI/refs/heads/main/KOLINSKI.lua"},
     {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
-    {text = "Nameless Hub", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
     {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"},
     {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"} -- New button with the new text
 }
@@ -154,7 +153,6 @@ ScriptTextBox.Font = Enum.Font.Gotham
 ScriptTextBox.PlaceholderText = "Enter script"
 ScriptTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 ScriptTextBox.TextSize = 14
-ScriptTextBox.TextWrapped = true  -- Prevent text overflow
 applyCorners(ScriptTextBox, 8)  -- Apply rounded corners
 
 -- ExecuteButton settings
@@ -197,12 +195,11 @@ FooterLabel.Font = Enum.Font.GothamBold
 FooterLabel.Text = "z4trox - Version 3.1 | https://discord.gg/a8DhGKRNEq"
 FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FooterLabel.TextSize = 12
-FooterLabel.TextWrapped = true
 applyCorners(FooterLabel, 8)
 
 -- ToggleVisibilityButton settings
 ToggleVisibilityButton.Name = "ToggleVisibilityButton"
-ToggleVisibilityButton.Parent = ScreenGui
+ToggleVisibilityButton.Parent = ScreenGui  -- Remis à l'extérieur du MainFrame
 ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 ToggleVisibilityButton.Position = UDim2.new(0.5, -50, 0.35, -150)
 ToggleVisibilityButton.Size = UDim2.new(0, 135, 0, 30)
