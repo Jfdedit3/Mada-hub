@@ -50,7 +50,7 @@ TitleLabel.Parent = MainFrame
 TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleLabel.Size = UDim2.new(1, 0, 0, 30)
 TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Text = "Mada hub v3.1"
+TitleLabel.Text = "Mada hub v3.2"
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.TextSize = 16
 applyCorners(TitleLabel, 10)
@@ -83,7 +83,7 @@ local buttons = {
     {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
     {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"},
-    {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"} -- New button with the new text
+    {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"}
 }
 
 -- Function to create a stylized button
@@ -147,19 +147,19 @@ local ExecuteButton = Instance.new("TextButton")
 ScriptTextBox.Name = "ScriptTextBox"
 ScriptTextBox.Parent = ButtonContainer
 ScriptTextBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-ScriptTextBox.Position = UDim2.new(0, 10, 0, #buttons * 25)  -- Positioned just after last button
+ScriptTextBox.Position = UDim2.new(0, 10, 0, #buttons * 25)
 ScriptTextBox.Size = UDim2.new(0.7, -20, 0, 20)
 ScriptTextBox.Font = Enum.Font.Gotham
 ScriptTextBox.PlaceholderText = "Enter script"
 ScriptTextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 ScriptTextBox.TextSize = 14
-applyCorners(ScriptTextBox, 8)  -- Apply rounded corners
+applyCorners(ScriptTextBox, 8)
 
 -- ExecuteButton settings
 ExecuteButton.Name = "ExecuteButton"
 ExecuteButton.Parent = ButtonContainer
 ExecuteButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ExecuteButton.Position = UDim2.new(0.7, 10, 0, #buttons * 25)  -- Positioned next to the TextBox
+ExecuteButton.Position = UDim2.new(0.7, 10, 0, #buttons * 25)
 ExecuteButton.Size = UDim2.new(0.25, -20, 0, 20)
 ExecuteButton.Font = Enum.Font.Gotham
 ExecuteButton.Text = "Run"
@@ -192,29 +192,50 @@ FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 FooterLabel.Position = UDim2.new(0, 10, 1, -30)
 FooterLabel.Size = UDim2.new(1, -20, 0, 30)
 FooterLabel.Font = Enum.Font.GothamBold
-FooterLabel.Text = "z4trox - Version 3.1 | https://discord.gg/a8DhGKRNEq"
+FooterLabel.Text = "z4trox - Version 3.2 | https://discord.gg/a8DhGKRNEq"
 FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FooterLabel.TextSize = 12
 applyCorners(FooterLabel, 8)
 
+-- Function to toggle UI visibility
+local function toggleUIVisibility()
+    if MainFrame.Visible then
+        -- Move the GUI up until it's out of view
+        MainFrame:TweenPosition(UDim2.new(0.5, -200, -1, 0), Enum.EasingDirection.InOut, Enum.EasingStyle.Quad, 0.75, true, 
+        function()
+            MainFrame.Visible = false  -- Hide the GUI after the animation
+        end)
+    else
+        -- Show the GUI and move it back into view
+        MainFrame.Visible = true
+        MainFrame.Position = UDim2.new(0.5, -200, -1, 0)  -- Set starting position above the view
+        MainFrame:TweenPosition(UDim2.new(0.5, -200, 0.5, -150), Enum.EasingDirection.InOut, Enum.EasingStyle.Quad, 0.75, true)
+    end
+end
+
 -- ToggleVisibilityButton settings
 ToggleVisibilityButton.Name = "ToggleVisibilityButton"
-ToggleVisibilityButton.Parent = ScreenGui  -- Remis à l'extérieur du MainFrame
-ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-ToggleVisibilityButton.Position = UDim2.new(0.5, -50, 0.35, -150)
-ToggleVisibilityButton.Size = UDim2.new(0, 135, 0, 30)
-ToggleVisibilityButton.Font = Enum.Font.Gotham
+ToggleVisibilityButton.Parent = ScreenGui
+ToggleVisibilityButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)  -- Couleur noire
+ToggleVisibilityButton.Position = UDim2.new(0, 10, 0, 5)
+ToggleVisibilityButton.Size = UDim2.new(0, 80, 0, 30)
+ToggleVisibilityButton.Font = Enum.Font.GothamBold
 ToggleVisibilityButton.Text = "Toggle UI"
 ToggleVisibilityButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 ToggleVisibilityButton.TextSize = 14
-applyCorners(ToggleVisibilityButton, 10)
+applyCorners(ToggleVisibilityButton, 8)
 
--- Function to toggle UI visibility
-local function toggleMainFrame()
-    MainFrame.Visible = not MainFrame.Visible
+-- Connect the toggle button to the function
+ToggleVisibilityButton.MouseButton1Click:Connect(toggleUIVisibility)
+
+-- Animation for introduction
+local function showIntroductionAnimation()
+    MainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+    MainFrame.Size = UDim2.new(0, 0, 0, 0)
+    MainFrame.Visible = true
+    MainFrame:TweenSize(UDim2.new(0, 400, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
+    MainFrame:TweenPosition(UDim2.new(0.5, -200, 0.5, -150), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
 end
 
-ToggleVisibilityButton.MouseButton1Click:Connect(toggleMainFrame)
-
--- Welcome notification
-createNotification("HELLO!", "Welcome to Mada hub v3.1", 5)
+-- Call the introduction animation when the script starts
+showIntroductionAnimation()
