@@ -83,7 +83,8 @@ local buttons = {
     {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
     {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"},
-    {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"}
+    {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
+    {text = "Aimbot", url = "https://raw.githubusercontent.com/Jfdedit3/Aimbot-aim-assist-lock-/refs/heads/main/Aimbot-aim-assist-lock"}
 }
 
 -- Function to create a stylized button
