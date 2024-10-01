@@ -13,7 +13,7 @@ local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.
 
 local gui = Instance.new("ScreenGui")
 
-gui.Name = "Honoka"
+gui.Name = "Mada hub v3.3"
 
 gui.Parent = game.CoreGui
 
