@@ -1,3 +1,6 @@
+-- full script by z4trox
+-- ui by Jfdedit3
+
 -- Loading the notification library
 local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
 
@@ -50,7 +53,7 @@ TitleLabel.Parent = MainFrame
 TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 TitleLabel.Size = UDim2.new(1, 0, 0, 30)
 TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Text = "Mada hub v3.2"
+TitleLabel.Text = "Mada hub v3.3"
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.TextSize = 16
 applyCorners(TitleLabel, 10)
@@ -84,7 +87,8 @@ local buttons = {
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
     {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"},
     {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
-    {text = "Aimbot", url = "https://raw.githubusercontent.com/Jfdedit3/Aimbot-aim-assist-lock-/refs/heads/main/Aimbot-aim-assist-lock"}
+    {text = "Aimbot", url = "https://raw.githubusercontent.com/Jfdedit3/Aimbot-aim-assist-lock-/refs/heads/main/Aimbot-aim-assist-lock"},
+    {text = "Fps Script", url = "https://raw.githubusercontent.com/Jfdedit3/Fps/refs/heads/main/fps.lua"} -- Nouveau bouton ajouté ici
 }
 
 -- Function to create a stylized button
@@ -193,10 +197,10 @@ FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 FooterLabel.Position = UDim2.new(0, 10, 1, -30)
 FooterLabel.Size = UDim2.new(1, -20, 0, 30)
 FooterLabel.Font = Enum.Font.GothamBold
-FooterLabel.Text = "z4trox - Version 3.2 | https://discord.gg/a8DhGKRNEq"
+FooterLabel.Text = "z4trox | v3.3 | https://discord.gg/c24QBGCu3V"
 FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FooterLabel.TextSize = 12
-applyCorners(FooterLabel, 8)
+FooterLabel.BackgroundTransparency = 1
 
 -- Function to toggle UI visibility
 local function toggleUIVisibility()
