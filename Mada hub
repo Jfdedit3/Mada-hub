@@ -206,7 +206,7 @@ optimizeGraphics()
 NotificationLoad:NewNotification({
     ["Mode"] = "Custom",
     ["Title"] = "Welcome To Mada hub :)",
-    ["Description"] = "Les graphismes ont été optimisés pour de meilleures performances.",
+    ["Description"] = "v3.4 soon",
     ["Timeout"] = 5
 })
 
