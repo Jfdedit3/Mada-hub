@@ -3,376 +3,230 @@
 
 local TweenService = game:GetService("TweenService")
 
-
-
 -- Chargement de la bibliothèque de notifications
-
 local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
 
-
-
 local gui = Instance.new("ScreenGui")
-
 gui.Name = "Mada hub v3.3"
-
 gui.Parent = game.CoreGui
 
-
-
 -- Création du cadre principal (MainFrame)
-
 local fr = Instance.new("Frame")
-
 fr.Size = UDim2.new(0, 400, 0, 300)
-
 fr.Position = UDim2.new(0.5, -200, 1.0, 0) -- Départ en dehors de l'écran (en bas)
-
 fr.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-
 fr.BorderColor3 = Color3.fromRGB(0, 0, 0)
-
 fr.BorderSizePixel = 1
-
 fr.Active = true
-
 fr.Draggable = true
-
 fr.Parent = gui
-
 fr.Visible = false
 
-
-
 -- Application de coins arrondis
-
 local function applyCorners(instance, cornerRadius)
-
     local corner = Instance.new("UICorner")
-
     corner.CornerRadius = UDim.new(0, cornerRadius)
-
     corner.Parent = instance
-
 end
-
 applyCorners(fr, 12)
 
-
-
 -- Titre du cadre
-
 local TitleLabel = Instance.new("TextLabel")
-
 TitleLabel.Size = UDim2.new(1, 0, 0, 30)
-
 TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-
 TitleLabel.Font = Enum.Font.GothamBold
-
 TitleLabel.Text = "Mada hub v3.3"
-
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
 TitleLabel.TextSize = 16
-
 TitleLabel.Parent = fr
-
 applyCorners(TitleLabel, 10)
 
-
-
 -- Bouton de fermeture
-
 local closeBtn = Instance.new("TextButton")
-
 closeBtn.Size = UDim2.new(0, 20, 0, 20)
-
 closeBtn.Position = UDim2.new(0.95, -20, 0, 5)
-
 closeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-
 closeBtn.Text = "X"
-
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-
 closeBtn.Font = Enum.Font.GothamBold
-
 closeBtn.TextSize = 14
-
 closeBtn.Parent = fr
-
 applyCorners(closeBtn, 5)
 
-
-
 -- Animation d'apparition du GUI
-
 local function showIntroductionAnimation()
-
     fr.Position = UDim2.new(0.5, -200, 0.5, -150)
-
     fr.Size = UDim2.new(0, 0, 0, 0)
-
     fr.Visible = true
-
     fr:TweenSize(UDim2.new(0, 400, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
-
     fr:TweenPosition(UDim2.new(0.5, -200, 0.5, -150), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
-
 end
-
-
 
 showIntroductionAnimation()
 
-
-
 -- Fonction pour la fermeture du GUI
-
 closeBtn.MouseButton1Down:Connect(function()
-
     local closeTween = TweenService:Create(fr, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-
         Position = UDim2.new(0.5, -200, 1.0, 0), -- Sortie en bas de l'écran
-
     })
-
     closeTween:Play()
-
     closeTween.Completed:Connect(function()
-
         gui:Destroy()
-
     end)
-
 end)
-
-
 
 -- Conteneur de boutons (ButtonContainer)
-
 local ButtonContainer = Instance.new("Frame")
-
 ButtonContainer.Size = UDim2.new(1, 0, 1, -70)
-
 ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
-
 ButtonContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-
 ButtonContainer.Parent = fr
-
 applyCorners(ButtonContainer, 10)
 
-
-
 -- Création de boutons avec URLs spécifiques
-
 local buttons = {
-
     {text = "KOLINSKI admin", url = "https://raw.githubusercontent.com/Jfdedit3/KOLINSKI/refs/heads/main/KOLINSKI.lua"},
-
     {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
-
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
-
     {text = "Velocity Ware", url = "https://raw.githubusercontent.com/ImNotRox1/VWare/main/Universal.lua"},
-
     {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
-
     {text = "Aimbot", url = "https://raw.githubusercontent.com/Jfdedit3/Aimbot-aim-assist-lock-/refs/heads/main/Aimbot-aim-assist-lock"},
-
     {text = "Fps Script", url = "https://raw.githubusercontent.com/Jfdedit3/Fps/refs/heads/main/fps.lua"} -- Nouveau bouton ajouté ici
-
 }
 
-
-
 for index, buttonInfo in ipairs(buttons) do
-
     local button = Instance.new("TextButton")
-
     button.Size = UDim2.new(1, -20, 0, 20)
-
     button.Position = UDim2.new(0, 10, 0, (index - 1) * 25)
-
     button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-
     button.Text = buttonInfo.text
-
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
-
     button.Font = Enum.Font.Gotham
-
     button.TextSize = 14
-
     button.Parent = ButtonContainer
-
     applyCorners(button, 8)
 
-
-
     button.MouseButton1Click:Connect(function()
-
         NotificationLoad:NewNotification({
-
             ["Mode"] = "Custom",
-
             ["Title"] = buttonInfo.text,
-
             ["Description"] = buttonInfo.text .. " is running.",
-
             ["Timeout"] = 3
-
         })
-
         loadstring(game:HttpGet(buttonInfo.url, true))()
-
     end)
-
 end
-
-
-
-
 
 -- Création du bouton Toggle UI
-
 local toggleUIButton = Instance.new("TextButton")
-
 toggleUIButton.Size = UDim2.new(0, 40, 0, 40)
-
 toggleUIButton.Position = UDim2.new(0.5, -350, 0, 10) -- Position à l'extérieur du GUI
-
 toggleUIButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Couleur du bouton
-
 toggleUIButton.Text = "Toggle"
-
 toggleUIButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
 toggleUIButton.Font = Enum.Font.GothamBold
-
 toggleUIButton.TextSize = 14
-
 toggleUIButton.Parent = gui
 
-
-
 -- Fonction pour minimiser et restaurer le GUI
-
 local isGUIVisible = true
 
-
-
 toggleUIButton.MouseButton1Click:Connect(function()
-
     if isGUIVisible then
-
         local hideTween = TweenService:Create(fr, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-
             Position = UDim2.new(0.5, -200, 1.0, 0), -- Sortie en bas
-
         })
-
         hideTween:Play()
-
         isGUIVisible = false
-
     else
-
         fr.Position = UDim2.new(0.5, -200, 1.0, 0) -- Réinitialiser la position
-
         fr.Visible = true
-
         local showTween = TweenService:Create(fr, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-
             Position = UDim2.new(0.5, -200, 0.5, -150), -- Remonter au centre
-
         })
-
         showTween:Play()
-
         isGUIVisible = true
-
     end
-
 end)
 
-
-
 -- Ajout du texte de pied de page
-
 local FooterLabel = Instance.new("TextLabel")
-
 FooterLabel.Name = "FooterLabel"
-
 FooterLabel.Parent = fr
-
 FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-
 FooterLabel.Position = UDim2.new(0, 10, 1, -30)
-
 FooterLabel.Size = UDim2.new(1, -20, 0, 30)
-
 FooterLabel.Font = Enum.Font.GothamBold
-
 FooterLabel.Text = "z4trox | v3.3 | https://discord.gg/c24QBGCu3V"
-
 FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-
 FooterLabel.TextSize = 12
-
 FooterLabel.BackgroundTransparency = 1
 
-
-
 -- Optimisations graphiques
-
 local function optimizeGraphics()
-
     -- Limite le nombre de lumières dynamiques
-
     for _, light in pairs(workspace:GetChildren()) do
-
         if light:IsA("PointLight") or light:IsA("SpotLight") or light:IsA("SurfaceLight") then
-
             light.Enabled = false -- Désactive les lumières inutiles
-
         end
-
     end
-
-
 
     -- Réduire les effets de post-traitement
-
-    local PostEffect = Instance.new("PostEffect") -- Assurez-vous d'avoir des effets de post-traitement appropriés
-
-    PostEffect.Parent = game.Lighting
-
-    PostEffect.BlurSize = 0 -- Réduire le flou
-
-
-
-    -- Activer la compression des textures
-
-    for _, part in pairs(workspace:GetDescendants()) do
-
-        if part:IsA("BasePart") then
-
-            part.TextureID = "" -- Utilisez des textures compressées
-
-        end
-
+    local lighting = game:GetService("Lighting")
+    
+    -- Désactivation des effets inutiles pour optimiser les FPS
+    if lighting:FindFirstChild("Bloom") then
+        lighting.Bloom.Enabled = false
     end
-
-
-
-    -- Ajustement de la qualité des ombres
-
-    game.Lighting.ShadowSoftness = 0.5 -- Ajustez la douceur des ombres
-
+    
+    if lighting:FindFirstChild("ColorCorrection") then
+        lighting.ColorCorrection.Enabled = false
+    end
+    
+    if lighting:FindFirstChild("DepthOfField") then
+        lighting.DepthOfField.Enabled = false
+    end
+    
+    if lighting:FindFirstChild("SunRays") then
+        lighting.SunRays.Enabled = false
+    end
+    
+    if lighting:FindFirstChild("Atmosphere") then
+        lighting.Atmosphere.Density = 0 -- Réduire l'atmosphère pour des performances accrues
+    end
+    
+    -- Désactiver l'ombrage de l'environnement
+    lighting.GlobalShadows = false
 end
 
-
-
+-- Appel de la fonction d'optimisation des graphismes
 optimizeGraphics()
+
+-- Notification d'optimisation terminée
+NotificationLoad:NewNotification({
+    ["Mode"] = "Custom",
+    ["Title"] = "Optimisation des Graphismes",
+    ["Description"] = "Les graphismes ont été optimisés pour de meilleures performances.",
+    ["Timeout"] = 5
+})
+
+-- Fonctionnalités supplémentaires ou paramètres
+local settingsButton = Instance.new("TextButton")
+settingsButton.Size = UDim2.new(0, 20, 0, 20)  -- Même taille que le bouton Close
+settingsButton.Position = UDim2.new(0, 5, 0, 5)  -- Position opposée à Close (côté gauche)
+settingsButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+settingsButton.Text = "⚙"  -- Icône de paramètres (ou "Param")
+settingsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+settingsButton.Font = Enum.Font.GothamBold
+settingsButton.TextSize = 14
+settingsButton.Parent = fr
+applyCorners(settingsButton, 5)
+
+settingsButton.MouseButton1Click:Connect(function()
+    NotificationLoad:NewNotification({
+        ["Mode"] = "Custom",
+        ["Title"] = "Paramètres",
+        ["Description"] = "Les paramètres sont encore en cours de développement.",
+        ["Timeout"] = 3
+    })
+end)
