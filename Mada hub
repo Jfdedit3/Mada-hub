@@ -46,7 +46,7 @@ local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 20, 0, 20)
 closeBtn.Position = UDim2.new(0.95, -20, 0, 5)
 closeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-closeBtn.Text = "X"
+closeBtn.Text = "🆇"
 closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeBtn.Font = Enum.Font.GothamBold
 closeBtn.TextSize = 14
@@ -225,7 +225,7 @@ applyCorners(settingsButton, 5)
 settingsButton.MouseButton1Click:Connect(function()
     NotificationLoad:NewNotification({
         ["Mode"] = "Custom",
-        ["Title"] = "Paramètres",
+        ["Title"] = "Options",
         ["Description"] = "SOON.",
         ["Timeout"] = 3
     })
