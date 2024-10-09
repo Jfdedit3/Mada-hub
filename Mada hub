@@ -1,5 +1,6 @@
 -- full script by z4trox
 -- ui by Jfdedit3
+-- v3.4
 
 local TweenService = game:GetService("TweenService")
 
@@ -7,7 +8,7 @@ local TweenService = game:GetService("TweenService")
 local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
 
 local gui = Instance.new("ScreenGui")
-gui.Name = "Mada hub v3.3"
+gui.Name = "Mada hub v3.4"
 gui.Parent = game.CoreGui
 
 -- Création du cadre principal (MainFrame)
@@ -158,7 +159,7 @@ FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 FooterLabel.Position = UDim2.new(0, 10, 1, -30)
 FooterLabel.Size = UDim2.new(1, -20, 0, 30)
 FooterLabel.Font = Enum.Font.GothamBold
-FooterLabel.Text = "z4trox | v3.3 | https://discord.gg/c24QBGCu3V"
+FooterLabel.Text = "z4trox | v3.4 | https://discord.gg/c24QBGCu3V"
 FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 FooterLabel.TextSize = 12
 FooterLabel.BackgroundTransparency = 1
@@ -207,7 +208,7 @@ optimizeGraphics()
 NotificationLoad:NewNotification({
     ["Mode"] = "Custom",
     ["Title"] = "Welcome To Mada hub :)",
-    ["Description"] = "v3.4 soon",
+    ["Description"] = "v3.4 :D",
     ["Timeout"] = 5
 })
 
