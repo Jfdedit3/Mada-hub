@@ -54,6 +54,48 @@ closeBtn.TextSize = 14
 closeBtn.Parent = fr
 applyCorners(closeBtn, 5)
 
+-- Bouton de minimisation
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 20, 0, 20)
+minimizeBtn.Position = UDim2.new(0.85, -20, 0, 5) -- À côté de Close
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+minimizeBtn.Text = "_"
+minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 14
+minimizeBtn.Parent = fr
+applyCorners(minimizeBtn, 5)
+
+-- Variable de suivi de l'état de minimisation
+local isMinimized = false
+
+-- Fonction pour minimiser le GUI
+minimizeBtn.MouseButton1Click:Connect(function()
+    if isMinimized then
+        -- Restaurer la taille complète
+        fr:TweenSize(UDim2.new(0, 400, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+        for _, element in pairs(fr:GetChildren()) do
+            if element:IsA("Frame") or element:IsA("TextLabel") or element:IsA("TextButton") then
+                if element ~= TitleLabel and element ~= closeBtn and element ~= minimizeBtn then
+                    element.Visible = true
+                end
+            end
+        end
+        isMinimized = false
+    else
+        -- Minimiser en affichant uniquement le titre, close et minimize
+        fr:TweenSize(UDim2.new(0, 400, 0, 30), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+        for _, element in pairs(fr:GetChildren()) do
+            if element:IsA("Frame") or element:IsA("TextLabel") or element:IsA("TextButton") then
+                if element ~= TitleLabel and element ~= closeBtn and element ~= minimizeBtn then
+                    element.Visible = false
+                end
+            end
+        end
+        isMinimized = true
+    end
+end)
+
 -- Animation d'apparition du GUI
 local function showIntroductionAnimation()
     fr.Position = UDim2.new(0.5, -200, 0.5, -150)
@@ -119,116 +161,74 @@ for index, buttonInfo in ipairs(buttons) do
     end)
 end
 
--- Création du bouton Toggle UI
-local toggleUIButton = Instance.new("TextButton")
-toggleUIButton.Size = UDim2.new(0, 40, 0, 40)
-toggleUIButton.Position = UDim2.new(0.5, -350, 0, 10) -- Position à l'extérieur du GUI
-toggleUIButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Couleur du bouton
-toggleUIButton.Text = "Toggle"
-toggleUIButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-toggleUIButton.Font = Enum.Font.GothamBold
-toggleUIButton.TextSize = 14
-toggleUIButton.Parent = gui
-
--- Fonction pour minimiser et restaurer le GUI
-local isGUIVisible = true
-
-toggleUIButton.MouseButton1Click:Connect(function()
-    if isGUIVisible then
-        local hideTween = TweenService:Create(fr, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Position = UDim2.new(0.5, -200, 1.0, 0), -- Sortie en bas
-        })
-        hideTween:Play()
-        isGUIVisible = false
-    else
-        fr.Position = UDim2.new(0.5, -200, 1.0, 0) -- Réinitialiser la position
-        fr.Visible = true
-        local showTween = TweenService:Create(fr, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Position = UDim2.new(0.5, -200, 0.5, -150), -- Remonter au centre
-        })
-        showTween:Play()
-        isGUIVisible = true
-    end
-end)
-
--- Ajout du texte de pied de page
-local FooterLabel = Instance.new("TextLabel")
-FooterLabel.Name = "FooterLabel"
-FooterLabel.Parent = fr
-FooterLabel.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-FooterLabel.Position = UDim2.new(0, 10, 1, -30)
-FooterLabel.Size = UDim2.new(1, -20, 0, 30)
-FooterLabel.Font = Enum.Font.GothamBold
-FooterLabel.Text = "z4trox | v3.4 | https://discord.gg/c24QBGCu3V"
-FooterLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-FooterLabel.TextSize = 12
-FooterLabel.BackgroundTransparency = 1
-
--- Optimisations graphiques
-local function optimizeGraphics()
-    -- Limite le nombre de lumières dynamiques
-    for _, light in pairs(workspace:GetChildren()) do
-        if light:IsA("PointLight") or light:IsA("SpotLight") or light:IsA("SurfaceLight") then
-            light.Enabled = false -- Désactive les lumières inutiles
-        end
-    end
-
-    -- Réduire les effets de post-traitement
-    local lighting = game:GetService("Lighting")
-    
-    -- Désactivation des effets inutiles pour optimiser les FPS
-    if lighting:FindFirstChild("Bloom") then
-        lighting.Bloom.Enabled = false
-    end
-    
-    if lighting:FindFirstChild("ColorCorrection") then
-        lighting.ColorCorrection.Enabled = false
-    end
-    
-    if lighting:FindFirstChild("DepthOfField") then
-        lighting.DepthOfField.Enabled = false
-    end
-    
-    if lighting:FindFirstChild("SunRays") then
-        lighting.SunRays.Enabled = false
-    end
-    
-    if lighting:FindFirstChild("Atmosphere") then
-        lighting.Atmosphere.Density = 0 -- Réduire l'atmosphère pour des performances accrues
-    end
-    
-    -- Désactiver l'ombrage de l'environnement
-    lighting.GlobalShadows = false
-end
-
--- Appel de la fonction d'optimisation des graphismes
-optimizeGraphics()
-
--- Notification d'optimisation terminée
-NotificationLoad:NewNotification({
-    ["Mode"] = "Custom",
-    ["Title"] = "Welcome To Mada hub :)",
-    ["Description"] = "v3.4 :D",
-    ["Timeout"] = 5
-})
-
 -- Fonctionnalités supplémentaires ou paramètres
 local settingsButton = Instance.new("TextButton")
 settingsButton.Size = UDim2.new(0, 20, 0, 20)  -- Même taille que le bouton Close
 settingsButton.Position = UDim2.new(0, 5, 0, 5)  -- Position opposée à Close (côté gauche)
 settingsButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-settingsButton.Text = "⚙"  -- Icône de paramètres (ou "Param")
+settingsButton.Text = "⚙️"
 settingsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 settingsButton.Font = Enum.Font.GothamBold
 settingsButton.TextSize = 14
 settingsButton.Parent = fr
 applyCorners(settingsButton, 5)
 
+-- Fonction pour ouvrir la fenêtre des paramètres
+local settingsFrame = Instance.new("Frame")
+settingsFrame.Size = UDim2.new(0, 300, 0, 200)
+settingsFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+settingsFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+settingsFrame.Visible = false
+settingsFrame.Parent = gui
+applyCorners(settingsFrame, 10)
+
+-- Titre des paramètres
+local settingsTitle = Instance.new("TextLabel")
+settingsTitle.Size = UDim2.new(1, 0, 0, 30)
+settingsTitle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+settingsTitle.Font = Enum.Font.GothamBold
+settingsTitle.Text = "Paramètres"
+settingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+settingsTitle.TextSize = 16
+settingsTitle.Parent = settingsFrame
+applyCorners(settingsTitle, 10)
+
+-- Bouton pour changer la couleur du GUI (exemple)
+local changeColorButton = Instance.new("TextButton")
+changeColorButton.Size = UDim2.new(0, 200, 0, 30)
+changeColorButton.Position = UDim2.new(0.5, -100, 0.3, 0)
+changeColorButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+changeColorButton.Text = "Changer couleur GUI"
+changeColorButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+changeColorButton.Font = Enum.Font.Gotham
+changeColorButton.TextSize = 14
+changeColorButton.Parent = settingsFrame
+applyCorners(changeColorButton, 8)
+
+-- Fonction pour changer la couleur du GUI
+changeColorButton.MouseButton1Click:Connect(function()
+    local newColor = Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255))
+    fr.BackgroundColor3 = newColor
+end)
+
+-- Bouton pour fermer la fenêtre des paramètres
+local closeSettingsButton = Instance.new("TextButton")
+closeSettingsButton.Size = UDim2.new(0, 20, 0, 20)
+closeSettingsButton.Position = UDim2.new(1, -25, 0, 5)
+closeSettingsButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+closeSettingsButton.Text = "|X|"
+closeSettingsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeSettingsButton.Font = Enum.Font.GothamBold
+closeSettingsButton.TextSize = 14
+closeSettingsButton.Parent = settingsFrame
+applyCorners(closeSettingsButton, 5)
+
+-- Ouvrir la fenêtre des paramètres
 settingsButton.MouseButton1Click:Connect(function()
-    NotificationLoad:NewNotification({
-        ["Mode"] = "Custom",
-        ["Title"] = "Options",
-        ["Description"] = "SOON.",
-        ["Timeout"] = 3
-    })
+    settingsFrame.Visible = not settingsFrame.Visible
+end)
+
+-- Fermer la fenêtre des paramètres
+closeSettingsButton.MouseButton1Click:Connect(function()
+    settingsFrame.Visible = false
 end)
