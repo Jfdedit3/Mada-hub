@@ -135,7 +135,7 @@ local buttons = {
     {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
     {text = "Aimbot", url = "https://raw.githubusercontent.com/Jfdedit3/Aimbot-aim-assist-lock-/refs/heads/main/Aimbot-aim-assist-lock"},
     {text = "Fps Script", url = "https://raw.githubusercontent.com/Jfdedit3/Fps/refs/heads/main/fps.lua"},
-    {text = "MADA Admin", url = "https://raw.githubusercontent.com/Jfdedit3/Mada-admin/refs/heads/main/Mada%20admin.txt"} -- Nouveau bouton ajouté ici
+    {text = "Mada Admin", url = "https://raw.githubusercontent.com/Jfdedit3/Mada-admin/refs/heads/main/Mada%20admin.txt"} -- Nouveau bouton ajouté ici
 }
 
 for index, buttonInfo in ipairs(buttons) do
