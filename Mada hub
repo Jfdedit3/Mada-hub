@@ -1,7 +1,7 @@
 -- Full script by z4trox
 -- IMPORTANT NOTE: Loaded scripts (like Kolinski Admin, Cmd Fe, etc.) may require a RemoteEvent called "CatalogGuiRemote"
---                  to be present in ReplicatedStorage of your game environment. This hub script does NOT provide it.
---                  If you encounter errors with loaded scripts, ensure your game environment contains "ReplicatedStorage.CatalogGuiRemote".
+-- to be present in ReplicatedStorage of your game environment. This hub script does NOT provide it.
+-- If you encounter errors with loaded scripts, ensure your game environment contains "ReplicatedStorage.CatalogGuiRemote".
 
 local TweenService = game:GetService("TweenService")
 
