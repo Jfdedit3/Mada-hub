@@ -1,133 +1,153 @@
--- full script by z4trox
--- ui by Jfdedit3
--- v3.4
+-- Full script by z4trox
+-- IMPORTANT NOTE: Loaded scripts (like Kolinski Admin, Cmd Fe, etc.) may require a RemoteEvent called "CatalogGuiRemote"
+--                  to be present in ReplicatedStorage of your game environment. This hub script does NOT provide it.
+--                  If you encounter errors with loaded scripts, ensure your game environment contains "ReplicatedStorage.CatalogGuiRemote".
 
 local TweenService = game:GetService("TweenService")
 
--- Chargement de la bibliothèque de notifications
-local NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
+-- Chargement de la bibliothèque de notifications avec gestion des erreurs
+local NotificationLoad = nil
+local notificationSuccess, notificationError = pcall(function()
+    NotificationLoad = loadstring(game:HttpGet('https://raw.githubusercontent.com/treeofplant/Notif/main/library.lua', true))()
+end)
 
-local gui = Instance.new("ScreenGui")
-gui.Name = "Mada hub v3.4"
-gui.Parent = game.CoreGui
+if not notificationSuccess then
+    warn("Error loading Notification library: " .. notificationError)
+    warn("Notifications désactivées. L'interface graphique fonctionnera sans les notifications.")
+    NotificationLoad = {
+        NewNotification = function() end
+    }
+else
+    print("Bibliothèque de notifications chargée avec succès.")
+end
 
--- Création du cadre principal (MainFrame)
-local fr = Instance.new("Frame")
-fr.Size = UDim2.new(0, 400, 0, 300)
-fr.Position = UDim2.new(0.5, -200, 1.0, 0) -- Départ en dehors de l'écran (en bas)
-fr.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-fr.BorderColor3 = Color3.fromRGB(0, 0, 0)
-fr.BorderSizePixel = 1
-fr.Active = true
-fr.Draggable = true
-fr.Parent = gui
-fr.Visible = false
+-- Interface graphique principale ScreenGui
+local mainGui = Instance.new("ScreenGui")
+mainGui.Name = "Mada Hub v3.4" -- Updated GUI Name to Mada Hub v3.4
+mainGui.Parent = game.CoreGui
+mainGui.ResetOnSpawn = false
 
--- Application de coins arrondis
+-- Cadre principal MainFrame
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 400, 0, 300)
+mainFrame.Position = UDim2.new(0.5, -200, 1.0, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 25) -- Darker background
+mainFrame.BorderColor3 = Color3.fromRGB(50, 150, 255) -- Electric blue border
+mainFrame.BorderSizePixel = 2
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = mainGui
+mainFrame.Visible = false
+
+-- Fonction pour appliquer des coins arrondis
 local function applyCorners(instance, cornerRadius)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, cornerRadius)
     corner.Parent = instance
 end
-applyCorners(fr, 12)
+applyCorners(mainFrame, 8) -- Less rounded corners
 
--- Titre du cadre
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Size = UDim2.new(1, 0, 0, 30)
-TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Text = gui.Name
-TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleLabel.TextSize = 16
-TitleLabel.Parent = fr
-applyCorners(TitleLabel, 10)
+-- Étiquette de titre du cadre
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleLabel"
+titleLabel.Size = UDim2.new(1, 0, 0, 30)
+titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 45) -- Darker title background
+titleLabel.Font = Enum.Font.SourceSansBold -- Futuristic font
+titleLabel.Text = mainGui.Name
+titleLabel.TextColor3 = Color3.fromRGB(150, 220, 255) -- Light blue text
+titleLabel.TextSize = 18 -- Slightly larger title text
+titleLabel.Parent = mainFrame
+applyCorners(titleLabel, 8) -- Match corner radius
 
 -- Bouton de fermeture
-local closeBtn = Instance.new("TextButton")
-closeBtn.Size = UDim2.new(0, 20, 0, 20)
-closeBtn.Position = UDim2.new(0.95, -20, 0, 5)
-closeBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-closeBtn.Text = "|X|"
-closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeBtn.Font = Enum.Font.GothamBold
-closeBtn.TextSize = 14
-closeBtn.Parent = fr
-applyCorners(closeBtn, 5)
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 20, 0, 20)
+closeButton.Position = UDim2.new(0.95, -20, 0, 5)
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80) -- Brighter red for close
+closeButton.Text = "|X|"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.Font = Enum.Font.SourceSansBold -- Futuristic font
+closeButton.TextSize = 14
+closeButton.Parent = mainFrame
+applyCorners(closeButton, 4) -- Less rounded corners
 
 -- Bouton de minimisation
-local minimizeBtn = Instance.new("TextButton")
-minimizeBtn.Size = UDim2.new(0, 20, 0, 20)
-minimizeBtn.Position = UDim2.new(0.85, -20, 0, 5) -- À côté de Close
-minimizeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-minimizeBtn.Text = "_"
-minimizeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizeBtn.Font = Enum.Font.GothamBold
-minimizeBtn.TextSize = 14
-minimizeBtn.Parent = fr
-applyCorners(minimizeBtn, 5)
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Name = "MinimizeButton"
+minimizeButton.Size = UDim2.new(0, 20, 0, 20)
+minimizeButton.Position = UDim2.new(0.85, -20, 0, 5)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(80, 180, 255) -- Blue minimize button
+minimizeButton.Text = "_"
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.Font = Enum.Font.SourceSansBold -- Futuristic font
+minimizeButton.TextSize = 14
+minimizeButton.Parent = mainFrame
+applyCorners(minimizeButton, 4) -- Less rounded corners
 
--- Variable de suivi de l'état de minimisation
+-- Variable de suivi de l'état de minimisation (sans changement)
 local isMinimized = false
 
--- Fonction pour minimiser le GUI
-minimizeBtn.MouseButton1Click:Connect(function()
+-- Fonction de minimisation (sans changement)
+minimizeButton.MouseButton1Click:Connect(function()
     if isMinimized then
-        -- Restaurer la taille complète
-        fr:TweenSize(UDim2.new(0, 400, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
-        for _, element in pairs(fr:GetChildren()) do
-            if element:IsA("Frame") or element:IsA("TextLabel") or element:IsA("TextButton") then
-                if element ~= TitleLabel and element ~= closeBtn and element ~= minimizeBtn then
+        mainFrame:TweenSize(UDim2.new(0, 400, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+        for _, element in pairs(mainFrame:GetChildren()) do
+            if element and element:IsA("GuiObject") then
+                if element ~= titleLabel and element ~= closeButton and element ~= minimizeButton and element.Name ~= "SettingsFrame" then
                     element.Visible = true
                 end
             end
         end
         isMinimized = false
     else
-        -- Minimiser en affichant uniquement le titre, close et minimize
-        fr:TweenSize(UDim2.new(0, 400, 0, 30), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
-        for _, element in pairs(fr:GetChildren()) do
-            if element:IsA("Frame") or element:IsA("TextLabel") or element:IsA("TextButton") then
-                if element ~= TitleLabel and element ~= closeBtn and element ~= minimizeBtn then
+        mainFrame:TweenSize(UDim2.new(0, 400, 0, 30), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.5, true)
+        for _, element in pairs(mainFrame:GetChildren()) do
+            if element and element:IsA("GuiObject") then
+                if element ~= titleLabel and element ~= closeButton and element ~= minimizeButton and element.Name ~= "SettingsFrame" then
                     element.Visible = false
                 end
             end
         end
         isMinimized = true
+        settingsFrame.Visible = false
     end
 end)
 
--- Animation d'apparition du GUI
+-- Fonction d'animation d'introduction de l'interface graphique (sans changement)
 local function showIntroductionAnimation()
-    fr.Position = UDim2.new(0.5, -200, 0.5, -150)
-    fr.Size = UDim2.new(0, 0, 0, 0)
-    fr.Visible = true
-    fr:TweenSize(UDim2.new(0, 400, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
-    fr:TweenPosition(UDim2.new(0.5, -200, 0.5, -150), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
+    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
+    mainFrame.Size = UDim2.new(0, 0, 0, 0)
+    mainFrame.Visible = true
+    mainFrame:TweenSize(UDim2.new(0, 400, 0, 300), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
+    mainFrame:TweenPosition(UDim2.new(0.5, -200, 0.5, -150), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.75, true)
 end
 
 showIntroductionAnimation()
 
--- Fonction pour la fermeture du GUI
-closeBtn.MouseButton1Down:Connect(function()
-    local closeTween = TweenService:Create(fr, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-        Position = UDim2.new(0.5, -200, 1.0, 0), -- Sortie en bas de l'écran
+-- Fonction de fermeture de l'interface graphique (sans changement)
+closeButton.MouseButton1Down:Connect(function()
+    local closeTween = TweenService:Create(mainFrame, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        Position = UDim2.new(0.5, -200, 1.0, 0),
     })
     closeTween:Play()
     closeTween.Completed:Connect(function()
-        gui:Destroy()
+        mainGui:Destroy()
     end)
 end)
 
--- Conteneur de boutons (ButtonContainer)
-local ButtonContainer = Instance.new("Frame")
-ButtonContainer.Size = UDim2.new(1, 0, 1, -70)
-ButtonContainer.Position = UDim2.new(0, 0, 0, 30)
-ButtonContainer.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-ButtonContainer.Parent = fr
-applyCorners(ButtonContainer, 10)
+-- Cadre conteneur de boutons
+local buttonsFrame = Instance.new("Frame")
+buttonsFrame.Name = "ButtonsFrame"
+buttonsFrame.Size = UDim2.new(1, 0, 1, -70)
+buttonsFrame.Position = UDim2.new(0, 0, 0, 30)
+buttonsFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 25) -- Correspond à la couleur de fond du cadre principal
+buttonsFrame.Parent = mainFrame
+applyCorners(buttonsFrame, 8) -- Coins moins arrondis
 
--- Création de boutons avec URLs spécifiques
-local buttons = {
+-- Données des boutons (sans changement)
+local buttonsData = {
     {text = "KOLINSKI admin", url = "https://raw.githubusercontent.com/Jfdedit3/KOLINSKI/refs/heads/main/KOLINSKI.lua"},
     {text = "Cmd Fe", url = "https://raw.githubusercontent.com/lxte/cmd/main/testing-main.lua"},
     {text = "Honoka Executor", url = "https://raw.githubusercontent.com/Jfdedit3/honoka-executor/main/Honoka%20executor%20byz4trox"},
@@ -135,20 +155,23 @@ local buttons = {
     {text = "Nameless Music Brook", url = "https://raw.githubusercontent.com/Jfdedit3/Nameless-hub-/refs/heads/main/Nameless%20musique"},
     {text = "Aimbot", url = "https://raw.githubusercontent.com/Jfdedit3/Aimbot-aim-assist-lock-/refs/heads/main/Aimbot-aim-assist-lock"},
     {text = "Fps Script", url = "https://raw.githubusercontent.com/Jfdedit3/Fps/refs/heads/main/fps.lua"},
-    {text = "Mada Admin", url = "https://raw.githubusercontent.com/Jfdedit3/Mada-admin/refs/heads/main/Mada%20admin2.txt"} -- Nouveau bouton ajouté ici
+    {text = "Mada Admin", url = "https://raw.githubusercontent.com/Jfdedit3/Mada-admin/refs/heads/main/Mada%20admin2.txt"}
 }
 
-for index, buttonInfo in ipairs(buttons) do
+-- Créer les boutons dynamiquement (style de bouton futuriste)
+for index, buttonInfo in ipairs(buttonsData) do
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(1, -20, 0, 20)
     button.Position = UDim2.new(0, 10, 0, (index - 1) * 25)
-    button.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    button.BackgroundColor3 = Color3.fromRGB(35, 35, 55) -- Fond de bouton plus foncé
+    button.BorderColor3 = Color3.fromRGB(50, 150, 255) -- Bordure bleu électrique
+    button.BorderSizePixel = 1
     button.Text = buttonInfo.text
-    button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.Font = Enum.Font.Gotham
+    button.TextColor3 = Color3.fromRGB(200, 230, 255) -- Texte bleu plus clair
+    button.Font = Enum.Font.SourceSansBold -- Police futuriste
     button.TextSize = 14
-    button.Parent = ButtonContainer
-    applyCorners(button, 8)
+    button.Parent = buttonsFrame
+    applyCorners(button, 6) -- Coins moins arrondis
 
     button.MouseButton1Click:Connect(function()
         NotificationLoad:NewNotification({
@@ -157,78 +180,147 @@ for index, buttonInfo in ipairs(buttons) do
             ["Description"] = buttonInfo.text .. " is running.",
             ["Timeout"] = 3
         })
-        loadstring(game:HttpGet(buttonInfo.url, true))()
+        local success, errorMessage = pcall(function()
+            loadstring(game:HttpGet(buttonInfo.url, true))()
+        end)
+        if not success then
+            NotificationLoad:NewNotification({
+                ["Mode"] = "Custom",
+                ["Title"] = "Error Loading Script",
+                ["Description"] = "Failed to load: " .. buttonInfo.text .. "\nError: " .. errorMessage,
+                ["Timeout"] = 5,
+                ["Icon"] = "Error"
+            })
+            warn("Error loading script: " .. buttonInfo.text .. "\nURL: " .. buttonInfo.url .. "\nError: " .. errorMessage)
+        end
     end)
 end
 
--- Fonctionnalités supplémentaires ou paramètres
+-- Bouton Paramètres (style futuriste)
 local settingsButton = Instance.new("TextButton")
-settingsButton.Size = UDim2.new(0, 20, 0, 20)  -- Même taille que le bouton Close
-settingsButton.Position = UDim2.new(0, 5, 0, 5)  -- Position opposée à Close (côté gauche)
-settingsButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+settingsButton.Name = "SettingsButton"
+settingsButton.Size = UDim2.new(0, 20, 0, 20)
+settingsButton.Position = UDim2.new(0, 5, 0, 5)
+settingsButton.BackgroundColor3 = Color3.fromRGB(35, 35, 55) -- Fond de bouton plus foncé
+settingsButton.BorderColor3 = Color3.fromRGB(50, 150, 255) -- Bordure bleu électrique
+settingsButton.BorderSizePixel = 1
 settingsButton.Text = "⚙️"
-settingsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-settingsButton.Font = Enum.Font.GothamBold
+settingsButton.TextColor3 = Color3.fromRGB(200, 230, 255) -- Texte bleu plus clair
+settingsButton.Font = Enum.Font.SourceSansBold -- Police futuriste
 settingsButton.TextSize = 14
-settingsButton.Parent = fr
-applyCorners(settingsButton, 5)
+settingsButton.Parent = mainFrame
+applyCorners(settingsButton, 4) -- Coins moins arrondis
 
--- Fonction pour ouvrir la fenêtre des paramètres
+-- Cadre Paramètres (style futuriste - semi-transparent)
 local settingsFrame = Instance.new("Frame")
-settingsFrame.Size = UDim2.new(0, 300, 0, 200)
-settingsFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
-settingsFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+settingsFrame.Name = "SettingsFrame"
+settingsFrame.Size = UDim2.new(0, 300, 0, 100)
+settingsFrame.Position = UDim2.new(0.5, -150, 0.5, -50)
+settingsFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 35) -- Fond légèrement plus clair, semi-transparent
+settingsFrame.BackgroundTransparency = 0.5 -- Semi-transparent
+settingsFrame.BorderColor3 = Color3.fromRGB(50, 150, 255) -- Bordure bleu électrique
+settingsFrame.BorderSizePixel = 2
 settingsFrame.Visible = false
-settingsFrame.Parent = gui
-applyCorners(settingsFrame, 10)
+settingsFrame.Parent = mainGui
+applyCorners(settingsFrame, 8) -- Coins moins arrondis
 
--- Titre des paramètres
+-- Étiquette Titre Paramètres (style futuriste)
 local settingsTitle = Instance.new("TextLabel")
+settingsTitle.Name = "SettingsTitle"
 settingsTitle.Size = UDim2.new(1, 0, 0, 30)
-settingsTitle.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-settingsTitle.Font = Enum.Font.GothamBold
-settingsTitle.Text = "opt"
-settingsTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+settingsTitle.BackgroundColor3 = Color3.fromRGB(40, 40, 60) -- Fond de titre des paramètres légèrement plus clair
+settingsTitle.Font = Enum.Font.SourceSansBold -- Police futuriste
+settingsTitle.Text = "Options"
+settingsTitle.TextColor3 = Color3.fromRGB(150, 220, 255) -- Texte bleu clair
 settingsTitle.TextSize = 16
 settingsTitle.Parent = settingsFrame
-applyCorners(settingsTitle, 10)
+applyCorners(settingsTitle, 8) -- Correspond au rayon des coins
 
--- Bouton pour changer la couleur du GUI (exemple)
-local changeColorButton = Instance.new("TextButton")
-changeColorButton.Size = UDim2.new(0, 200, 0, 30)
-changeColorButton.Position = UDim2.new(0.5, -100, 0.3, 0)
-changeColorButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-changeColorButton.Text = "color testGUI"
-changeColorButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-changeColorButton.Font = Enum.Font.Gotham
-changeColorButton.TextSize = 14
-changeColorButton.Parent = settingsFrame
-applyCorners(changeColorButton, 8)
-
--- Fonction pour changer la couleur du GUI
-changeColorButton.MouseButton1Click:Connect(function()
-    local newColor = Color3.fromRGB(math.random(0, 255), math.random(0, 255), math.random(0, 255))
-    fr.BackgroundColor3 = newColor
-end)
-
--- Bouton pour fermer la fenêtre des paramètres
+-- Bouton Fermer Paramètres (style futuriste)
 local closeSettingsButton = Instance.new("TextButton")
+closeSettingsButton.Name = "CloseSettingsButton"
 closeSettingsButton.Size = UDim2.new(0, 20, 0, 20)
 closeSettingsButton.Position = UDim2.new(1, -25, 0, 5)
-closeSettingsButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+closeSettingsButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80) -- Rouge plus vif pour la fermeture
 closeSettingsButton.Text = "|X|"
 closeSettingsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-closeSettingsButton.Font = Enum.Font.GothamBold
+closeSettingsButton.Font = Enum.Font.SourceSansBold -- Police futuriste
 closeSettingsButton.TextSize = 14
 closeSettingsButton.Parent = settingsFrame
-applyCorners(closeSettingsButton, 5)
+applyCorners(closeSettingsButton, 4) -- Coins moins arrondis
 
--- Ouvrir la fenêtre des paramètres
+
+-- Fonction pour appliquer le thème (simplifié - couleurs du thème futuriste appliquées directement)
+local function applyTheme(theme)
+    mainFrame.BackgroundColor3 = theme.mainBG
+    mainFrame.BorderColor3 = theme.mainBorder -- Appliquer la couleur de bordure
+    mainFrame.BorderSizePixel = theme.borderSize -- Appliquer la taille de la bordure
+
+    titleLabel.BackgroundColor3 = theme.titleBG
+    titleLabel.TextColor3 = theme.titleText
+    titleLabel.Font = theme.textFont -- Appliquer la police au titre
+
+    buttonsFrame.BackgroundColor3 = theme.mainBG
+    buttonsFrame.BorderColor3 = theme.mainBorder -- Appliquer également la bordure à buttonsFrame pour la cohérence
+    buttonsFrame.BorderSizePixel = theme.borderSize
+
+    closeButton.BackgroundColor3 = theme.closeBtnBG
+    minimizeButton.BackgroundColor3 = theme.minimizeBtnBG
+    settingsButton.BackgroundColor3 = theme.settingsBtnBG
+    settingsFrame.BackgroundColor3 = theme.settingsFrameBG
+    settingsFrame.BackgroundTransparency = theme.settingsFrameTransparency -- Appliquer la transparence
+    settingsFrame.BorderColor3 = theme.settingsFrameBorder -- Appliquer la bordure du cadre des paramètres
+    settingsFrame.BorderSizePixel = theme.settingsFrameBorderSize
+
+    settingsTitle.BackgroundColor3 = theme.settingsTitleBG
+    settingsTitle.TextColor3 = theme.settingsTitleText
+    settingsTitle.Font = theme.textFont -- Appliquer la police au titre des paramètres
+    closeSettingsButton.BackgroundColor3 = theme.closeBtnBG
+
+
+    for _, button in pairs(buttonsFrame:GetChildren()) do
+        if button:IsA("TextButton") then
+            button.BackgroundColor3 = theme.buttonBG
+            button.BorderColor3 = theme.buttonBorder -- Appliquer la bordure du bouton
+            button.BorderSizePixel = theme.buttonBorderSize
+            button.TextColor3 = theme.buttonText
+            button.Font = theme.textFont -- Appliquer la police aux boutons
+        end
+    end
+    for _, settingButton in pairs(settingsFrame:GetChildren()) do
+        if settingButton:IsA("TextButton") and settingButton ~= closeSettingsButton then
+             settingButton.BackgroundColor3 = theme.settingsButtonBG
+             settingButton.BorderColor3 = theme.settingsButtonBorder -- Appliquer la bordure du bouton des paramètres
+             settingButton.BorderSizePixel = theme.settingsButtonBorderSize
+             settingButton.TextColor3 = theme.settingsButtonText
+             settingButton.Font = theme.textFont -- Appliquer la police aux boutons des paramètres
+        end
+    end
+end
+
+
+local themes = { -- Thème futuriste !
+    Futuristic = {
+        mainBG = Color3.fromRGB(15, 15, 25),         mainBorder = Color3.fromRGB(50, 150, 255),        borderSize = 2,
+        titleBG = Color3.fromRGB(30, 30, 45),        titleText = Color3.fromRGB(150, 220, 255),       textFont = Enum.Font.SourceSansBold,
+        buttonBG = Color3.fromRGB(35, 35, 55),       buttonBorder = Color3.fromRGB(50, 150, 255),       buttonBorderSize = 1,      buttonText = Color3.fromRGB(200, 230, 255),
+        closeBtnBG = Color3.fromRGB(255, 80, 80),    minimizeBtnBG = Color3.fromRGB(80, 180, 255),    settingsBtnBG = Color3.fromRGB(35, 35, 55),  settingsButtonBorder = Color3.fromRGB(50, 150, 255), settingsButtonBorderSize = 1, settingsButtonText = Color3.fromRGB(200, 230, 255),
+        settingsFrameBG = Color3.fromRGB(25, 25, 35), settingsFrameTransparency = 0.5, settingsFrameBorder =  Color3.fromRGB(50, 150, 255), settingsFrameBorderSize = 2,
+        settingsTitleBG = Color3.fromRGB(40, 40, 60), settingsTitleText = Color3.fromRGB(150, 220, 255),
+    }
+}
+
+
+-- Appliquer le thème futuriste au démarrage
+applyTheme(themes.Futuristic)
+
+
+-- Ouvrir le cadre des paramètres (sans changement)
 settingsButton.MouseButton1Click:Connect(function()
     settingsFrame.Visible = not settingsFrame.Visible
 end)
 
--- Fermer la fenêtre des paramètres
+-- Fermer le cadre des paramètres (sans changement)
 closeSettingsButton.MouseButton1Click:Connect(function()
     settingsFrame.Visible = false
 end)
