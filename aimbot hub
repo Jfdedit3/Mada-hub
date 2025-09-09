@@ -1,8 +1,35 @@
 if _G.ScriptActive then _G.ScriptActive = false return end
 _G.ScriptActive = true
 
-local Config = {AimEnabled=true,Fov=120,Smoothness=0.1,Prediction=0.2,TargetPart="Head",TeamCheck=false,WallCheck=false,FovColor=Color3.new(1,1,1),ShowFovCircle=false}
-local ESPConfig = {Enabled=true,Boxes=true,Names=true,Tracers=true,Health=true,TeamCheck=false,MaxDistance=2000,ColorEnemy=Color3.new(1,0.27,0.27),ColorTeam=Color3.new(0.27,0.67,1),ColorTarget=Color3.new(1,1,0.39),CornerSize=10,CornerThickness=1,TracerThickness=1,Font=2,TextSize=14}
+local Config = {
+    AimEnabled = true,
+    Fov = 120,
+    Smoothness = 0.1,
+    Prediction = 0.2,
+    TargetPart = "Head",
+    TeamCheck = false,
+    WallCheck = true,
+    FovColor = Color3.new(1, 1, 1),
+    ShowFovCircle = false
+}
+
+local ESPConfig = {
+    Enabled = true,
+    Boxes = true,
+    Names = true,
+    Tracers = true,
+    Health = true,
+    TeamCheck = false,
+    MaxDistance = 2000,
+    ColorEnemy = Color3.new(1, 0.27, 0.27),
+    ColorTeam = Color3.new(0.27, 0.67, 1),
+    ColorTarget = Color3.new(1, 1, 0.39),
+    CornerSize = 10,
+    CornerThickness = 1,
+    TracerThickness = 1,
+    Font = 2,
+    TextSize = 14
+}
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
@@ -11,38 +38,73 @@ local Camera = workspace.CurrentCamera
 local LocalPlayer = Players.LocalPlayer
 
 local playerGui = LocalPlayer:WaitForChild("PlayerGui")
-local screenGui = Instance.new("ScreenGui",playerGui)
-screenGui.Name="AimESPUI"
-screenGui.ResetOnSpawn=false
+local screenGui = Instance.new("ScreenGui", playerGui)
+screenGui.Name = "AimESPUI"
+screenGui.ResetOnSpawn = false
 
-local toggleBtn = Instance.new("TextButton",screenGui)
-toggleBtn.Size=UDim2.new(0,60,0,30)
-toggleBtn.Position=UDim2.new(0.5,-30,0,10)
-toggleBtn.BackgroundColor3=Color3.fromRGB(40,40,40)
-toggleBtn.TextColor3=Color3.fromRGB(255,255,255)
-toggleBtn.Font=Enum.Font.SourceSans
-toggleBtn.TextSize=14
-toggleBtn.Text="UI"
+local toggleBtn = Instance.new("TextButton", screenGui)
+toggleBtn.Size = UDim2.new(0, 60, 0, 30)
+toggleBtn.Position = UDim2.new(1, -70, 0, 10)
+toggleBtn.Text = "UI"
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+toggleBtn.Font = Enum.Font.SourceSans
+toggleBtn.TextSize = 16
 
-local frame = Instance.new("Frame",screenGui)
-frame.Size=UDim2.new(0,300,0,260)
-frame.Position=UDim2.new(0.5,-150,0.5,-130)
-frame.BackgroundColor3=Color3.fromRGB(20,20,20)
-frame.BackgroundTransparency=0.5
-frame.Visible=true
+local corner = Instance.new("UICorner", toggleBtn)
+corner.CornerRadius = UDim.new(0.2, 0)
 
-local drag,di,ds,sp
-frame.InputBegan:Connect(function(i)
-    if i.UserInputType==Enum.UserInputType.MouseButton1 then
-        drag=true;di=i;ds=i.Position;sp=frame.Position
-        di.Changed:Connect(function() if di.UserInputState==Enum.UserInputState.End then drag=false end end)
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 300, 0, 260)
+frame.Position = UDim2.new(0.5, -150, 0.5, -130)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BackgroundTransparency = 0.5
+frame.Visible = true
+
+local isDraggingFrame = false
+local dragStartPosFrame
+local dragStartGuiPosFrame
+
+local isDraggingToggle = false
+local dragStartPosToggle
+local dragStartGuiPosToggle
+
+UserInput.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        local mousePos = input.Position
+        if mousePos.X > frame.AbsolutePosition.X and mousePos.X < frame.AbsolutePosition.X + frame.AbsoluteSize.X and
+           mousePos.Y > frame.AbsolutePosition.Y and mousePos.Y < frame.AbsolutePosition.Y + frame.AbsoluteSize.Y then
+            isDraggingFrame = true
+            dragStartPosFrame = mousePos
+            dragStartGuiPosFrame = frame.Position
+        elseif mousePos.X > toggleBtn.AbsolutePosition.X and mousePos.X < toggleBtn.AbsolutePosition.X + toggleBtn.AbsoluteSize.X and
+               mousePos.Y > toggleBtn.AbsolutePosition.Y and mousePos.Y < toggleBtn.AbsolutePosition.Y + toggleBtn.AbsoluteSize.Y then
+            isDraggingToggle = true
+            dragStartPosToggle = mousePos
+            dragStartGuiPosToggle = toggleBtn.Position
+        end
     end
 end)
-frame.InputChanged:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseMovement then di=i end end)
-UserInput.InputChanged:Connect(function(i)
-    if drag and i==di then
-        local delta=i.Position-ds
-        frame.Position=UDim2.new(sp.X.Scale,sp.X.Offset+delta.X,sp.Y.Scale,sp.Y.Offset+delta.Y)
+
+UserInput.InputEnded:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        isDraggingFrame = false
+        isDraggingToggle = false
+    end
+end)
+
+UserInput.InputChanged:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        if isDraggingFrame then
+            local delta = input.Position - dragStartPosFrame
+            frame.Position = UDim2.new(dragStartGuiPosFrame.X.Scale, dragStartGuiPosFrame.X.Offset + delta.X, dragStartGuiPosFrame.Y.Scale, dragStartGuiPosFrame.Y.Offset + delta.Y)
+        elseif isDraggingToggle then
+            local delta = input.Position - dragStartPosToggle
+            toggleBtn.Position = UDim2.new(dragStartGuiPosToggle.X.Scale, dragStartGuiPosToggle.X.Offset + delta.X, dragStartGuiPosToggle.Y.Scale, dragStartGuiPosToggle.Y.Offset + delta.Y)
+        end
     end
 end)
 
@@ -50,166 +112,173 @@ toggleBtn.MouseButton1Click:Connect(function()
     frame.Visible = not frame.Visible
 end)
 
-local function newButton(n,t,x,y,fn)
-    local b=Instance.new("TextButton",frame)
-    b.Name=n
-    b.Size=UDim2.new(0,120,0,30)
-    b.Position=UDim2.new(0,x,0,y)
-    b.BackgroundColor3=Color3.fromRGB(40,40,40)
-    b.TextColor3=Color3.fromRGB(255,255,255)
-    b.Font=Enum.Font.SourceSans
-    b.TextSize=14
-    b.Text=t
+local function newButton(n, t, x, y, fn)
+    local b = Instance.new("TextButton", frame)
+    b.Name = n
+    b.Size = UDim2.new(0, 120, 0, 30)
+    b.Position = UDim2.new(0, x, 0, y)
+    b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    b.TextColor3 = Color3.fromRGB(255, 255, 255)
+    b.Font = Enum.Font.SourceSans
+    b.TextSize = 14
+    b.Text = t
     b.MouseButton1Click:Connect(function() fn(b) end)
     return b
 end
 
-local function newLabel(n,t,x,y)
-    local l=Instance.new("TextLabel",frame)
-    l.Name=n
-    l.Size=UDim2.new(0,120,0,30)
-    l.Position=UDim2.new(0,x,0,y)
-    l.BackgroundTransparency=1
-    l.TextColor3=Color3.fromRGB(255,255,255)
-    l.Font=Enum.Font.SourceSans
-    l.TextSize=14
-    l.Text=t
+local function newLabel(n, t, x, y)
+    local l = Instance.new("TextLabel", frame)
+    l.Name = n
+    l.Size = UDim2.new(0, 120, 0, 30)
+    l.Position = UDim2.new(0, x, 0, y)
+    l.BackgroundTransparency = 1
+    l.TextColor3 = Color3.fromRGB(255, 255, 255)
+    l.Font = Enum.Font.SourceSans
+    l.TextSize = 14
+    l.Text = t
     return l
 end
 
-local aimBtn=newButton("AimBtn","Aim: On",10,10,function(b)
-    Config.AimEnabled=not Config.AimEnabled
-    b.Text="Aim: "..(Config.AimEnabled and "On" or "Off")
+local aimBtn = newButton("AimBtn", "Aim: On", 10, 10, function(b)
+    Config.AimEnabled = not Config.AimEnabled
+    b.Text = "Aim: " .. (Config.AimEnabled and "On" or "Off")
 end)
-local espBtn=newButton("ESPBtn","ESP: On",150,10,function(b)
-    ESPConfig.Enabled=not ESPConfig.Enabled
-    b.Text="ESP: "..(ESPConfig.Enabled and "On" or "Off")
+local espBtn = newButton("ESPBtn", "ESP: On", 150, 10, function(b)
+    ESPConfig.Enabled = not ESPConfig.Enabled
+    b.Text = "ESP: " .. (ESPConfig.Enabled and "On" or "Off")
 end)
-local teamBtn=newButton("TeamBtn","Team: Off",10,50,function(b)
-    Config.TeamCheck=not Config.TeamCheck
-    ESPConfig.TeamCheck=Config.TeamCheck
-    b.Text="Team: "..(Config.TeamCheck and "On" or "Off")
+local teamBtn = newButton("TeamBtn", "Team: Off", 10, 50, function(b)
+    Config.TeamCheck = not Config.TeamCheck
+    ESPConfig.TeamCheck = Config.TeamCheck
+    b.Text = "Team: " .. (Config.TeamCheck and "On" or "Off")
 end)
-local wallBtn=newButton("WallBtn","Wall: Off",150,50,function(b)
-    Config.WallCheck=not Config.WallCheck
-    b.Text="Wall: "..(Config.WallCheck and "On" or "Off")
-end)
-
-local fovLabel=newLabel("FovLbl","FOV: "..Config.Fov,10,90)
-newButton("FovDown","-10",10,130,function()
-    Config.Fov=math.max(10,Config.Fov-10)
-    fovLabel.Text="FOV: "..Config.Fov
-end)
-newButton("FovUp","+10",150,130,function()
-    Config.Fov=Config.Fov+10
-    fovLabel.Text="FOV: "..Config.Fov
+local wallBtn = newButton("WallBtn", "Wall: On", 150, 50, function(b)
+    Config.WallCheck = not Config.WallCheck
+    b.Text = "Wall: " .. (Config.WallCheck and "On" or "Off")
 end)
 
-local smoothLabel=newLabel("SmtLbl","Smooth: "..string.format("%.2f",Config.Smoothness),10,170)
-newButton("SmtDown","-0.05",10,210,function()
-    Config.Smoothness=math.max(0,Config.Smoothness-0.05)
-    smoothLabel.Text="Smooth: "..string.format("%.2f",Config.Smoothness)
+local fovLabel = newLabel("FovLbl", "FOV: " .. Config.Fov, 10, 90)
+newButton("FovDown", "-10", 10, 130, function()
+    Config.Fov = math.max(10, Config.Fov - 10)
+    fovLabel.Text = "FOV: " .. Config.Fov
 end)
-newButton("SmtUp","+0.05",150,210,function()
-    Config.Smoothness=math.min(1,Config.Smoothness+0.05)
-    smoothLabel.Text="Smooth: "..string.format("%.2f",Config.Smoothness)
+newButton("FovUp", "+10", 150, 130, function()
+    Config.Fov = Config.Fov + 10
+    fovLabel.Text = "FOV: " .. Config.Fov
+end)
+
+local smoothLabel = newLabel("SmtLbl", "Smooth: " .. string.format("%.2f", Config.Smoothness), 10, 170)
+newButton("SmtDown", "-0.05", 10, 210, function()
+    Config.Smoothness = math.max(0, Config.Smoothness - 0.05)
+    smoothLabel.Text = "Smooth: " .. string.format("%.2f", Config.Smoothness)
+end)
+newButton("SmtUp", "+0.05", 150, 210, function()
+    Config.Smoothness = math.min(1, Config.Smoothness + 0.05)
+    smoothLabel.Text = "Smooth: " .. string.format("%.2f", Config.Smoothness)
 end)
 
 local function newCorner()
-    local d=Drawing.new("Line")
-    d.Visible=false
-    d.Thickness=ESPConfig.CornerThickness
+    local d = Drawing.new("Line")
+    d.Visible = false
+    d.Thickness = ESPConfig.CornerThickness
     return d
 end
 local function newTextESP()
-    local d=Drawing.new("Text")
-    d.Visible=false
-    d.Size=ESPConfig.TextSize
-    d.Center=true
-    d.Outline=true
-    d.Font=ESPConfig.Font
+    local d = Drawing.new("Text")
+    d.Visible = false
+    d.Size = ESPConfig.TextSize
+    d.Center = true
+    d.Outline = true
+    d.Font = ESPConfig.Font
     return d
 end
 local function newBarESP()
-    local d=Drawing.new("Square")
-    d.Visible=false
-    d.Filled=true
+    local d = Drawing.new("Square")
+    d.Visible = false
+    d.Filled = true
     return d
 end
 
-local espObjects={}
+local espObjects = {}
 
 local function removeESP(p)
-    local o=espObjects[p]
+    local o = espObjects[p]
     if not o then return end
-    for _,c in ipairs(o.corners) do c:Remove() end
-    o.nameShadow:Remove();o.nameText:Remove();o.tracer:Remove();o.healthBg:Remove();o.health:Remove()
-    espObjects[p]=nil
+    for _, c in ipairs(o.corners) do c:Remove() end
+    o.nameShadow:Remove();
+    o.nameText:Remove();
+    o.tracer:Remove();
+    o.healthBg:Remove();
+    o.health:Remove()
+    espObjects[p] = nil
 end
 
-local function createESP(p,char)
+local function createESP(p, char)
     removeESP(p)
-    local corners={}
-    for i=1,8 do corners[i]=newCorner() end
-    espObjects[p]={
-        corners=corners,
-        nameShadow=newTextESP(),
-        nameText=newTextESP(),
-        tracer=Drawing.new("Line"),
-        healthBg=newBarESP(),
-        health=newBarESP(),
-        Character=char
+    local corners = {}
+    for i = 1, 8 do corners[i] = newCorner() end
+    espObjects[p] = {
+        corners = corners,
+        nameShadow = newTextESP(),
+        nameText = newTextESP(),
+        tracer = Drawing.new("Line"),
+        healthBg = newBarESP(),
+        health = newBarESP(),
+        Character = char
     }
 end
 
 Players.PlayerAdded:Connect(function(p)
-    p.CharacterAdded:Connect(function(c) createESP(p,c) end)
+    p.CharacterAdded:Connect(function(c) createESP(p, c) end)
     p.CharacterRemoving:Connect(function() removeESP(p) end)
-    if p.Character then createESP(p,p.Character) end
+    if p.Character then createESP(p, p.Character) end
 end)
-for _,p in ipairs(Players:GetPlayers()) do
-    if p~=LocalPlayer then
-        p.CharacterAdded:Connect(function(c) createESP(p,c) end)
+for _, p in ipairs(Players:GetPlayers()) do
+    if p ~= LocalPlayer then
+        p.CharacterAdded:Connect(function(c) createESP(p, c) end)
         p.CharacterRemoving:Connect(function() removeESP(p) end)
-        if p.Character then createESP(p,p.Character) end
+        if p.Character then createESP(p, p.Character) end
     end
 end
 
 local function IsAlive(p)
-    local c=p.Character
-    local h=c and c:FindFirstChildOfClass("Humanoid")
-    return h and h.Health>0
+    local c = p.Character
+    local h = c and c:FindFirstChildOfClass("Humanoid")
+    return h and h.Health > 0
 end
+
 local function IsSameTeam(p)
-    return Config.TeamCheck and p.Team==LocalPlayer.Team
+    return Config.TeamCheck and p.Team == LocalPlayer.Team
 end
+
 local function HasLOS(p)
     if not Config.WallCheck then return true end
-    local c=p.Character
-    local t=c and c:FindFirstChild(Config.TargetPart)
+    local c = p.Character
+    local t = c and c:FindFirstChild(Config.TargetPart)
     if not t then return false end
-    local o=Camera.CFrame.Position
-    local rp=RaycastParams.new()
-    rp.FilterDescendantsInstances={LocalPlayer.Character}
-    rp.FilterType=Enum.RaycastFilterType.Blacklist
-    local r=workspace:Raycast(o,t.Position-o,rp)
+    local o = Camera.CFrame.Position
+    local rp = RaycastParams.new()
+    rp.FilterDescendantsInstances = { LocalPlayer.Character }
+    rp.FilterType = Enum.RaycastFilterType.Blacklist
+    local r = workspace:Raycast(o, t.Position - o, rp)
     return not r or r.Instance:IsDescendantOf(c)
 end
-local function Predict(pos,vel)
-    return pos+vel*Config.Prediction
+
+local function Predict(pos, vel)
+    return pos + vel * Config.Prediction
 end
 
 local function GetClosestTarget()
-    local best,md=nil,math.huge
-    local ctr=Camera.ViewportSize/2
-    for _,p in ipairs(Players:GetPlayers()) do
-        if p~=LocalPlayer and IsAlive(p) and not IsSameTeam(p) and HasLOS(p) then
-            local t=p.Character and p.Character:FindFirstChild(Config.TargetPart)
+    local best, md = nil, math.huge
+    local ctr = Camera.ViewportSize / 2
+    for _, p in ipairs(Players:GetPlayers()) do
+        if p ~= LocalPlayer and IsAlive(p) and not IsSameTeam(p) and HasLOS(p) then
+            local t = p.Character and p.Character:FindFirstChild(Config.TargetPart)
             if t then
-                local sp,on=Camera:WorldToViewportPoint(t.Position)
+                local sp, on = Camera:WorldToViewportPoint(t.Position)
                 if on then
-                    local d=(Vector2.new(sp.X,sp.Y)-ctr).Magnitude
-                    if d<md and d<=Config.Fov then md=d;best=p end
+                    local d = (Vector2.new(sp.X, sp.Y) - ctr).Magnitude
+                    if d < md and d <= Config.Fov then md = d; best = p end
                 end
             end
         end
@@ -219,104 +288,115 @@ end
 
 local function AimAtPart(t)
     if not t then return end
-    local dir=(Predict(t.Position,t.Velocity or Vector3.zero)-Camera.CFrame.Position).Unit
-    if Config.Smoothness>=1 then
-        Camera.CFrame=CFrame.new(Camera.CFrame.Position,Camera.CFrame.Position+dir)
+    local dir = (Predict(t.Position, t.Velocity or Vector3.zero) - Camera.CFrame.Position).Unit
+    if Config.Smoothness >= 1 then
+        Camera.CFrame = CFrame.new(Camera.CFrame.Position, Camera.CFrame.Position + dir)
     else
-        Camera.CFrame=Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position,Camera.CFrame.Position+dir),Config.Smoothness)
+        Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, Camera.CFrame.Position + dir), Config.Smoothness)
     end
 end
 
-local fovCircle=Drawing.new("Circle")
-fovCircle.Visible=Config.ShowFovCircle
-fovCircle.Thickness=1
-fovCircle.Color=Config.FovColor
-fovCircle.Filled=false
-fovCircle.Radius=Config.Fov
-fovCircle.Position=Camera.ViewportSize/2
+local fovCircle = Drawing.new("Circle")
+fovCircle.Visible = Config.ShowFovCircle
+fovCircle.Thickness = 1
+fovCircle.Color = Config.FovColor
+fovCircle.Filled = false
+fovCircle.Radius = Config.Fov
+fovCircle.Position = Camera.ViewportSize / 2
 
-local indicator=Drawing.new("Triangle")
-indicator.Visible=false
-indicator.Thickness=1
-indicator.Color=Color3.new(0,1,0)
-indicator.PointA=Vector2.new(0,0)
-indicator.PointB=Vector2.new(5,10)
-indicator.PointC=Vector2.new(-5,10)
+local indicator = Drawing.new("Triangle")
+indicator.Visible = false
+indicator.Thickness = 1
+indicator.Color = Color3.new(0, 1, 0)
+indicator.PointA = Vector2.new(0, 0)
+indicator.PointB = Vector2.new(5, 10)
+indicator.PointC = Vector2.new(-5, 10)
 
 local function UpdateFovCircle()
-    fovCircle.Position=Camera.ViewportSize/2
-    fovCircle.Radius=Config.Fov
+    fovCircle.Position = Camera.ViewportSize / 2
+    fovCircle.Radius = Config.Fov
 end
+
 local function UpdateIndicator(t)
-    if not t then indicator.Visible=false return end
-    local sp,on=Camera:WorldToViewportPoint(t.Position)
-    indicator.Visible=on
-    if on then indicator.Position=Vector2.new(sp.X,sp.Y) end
+    if not t then indicator.Visible = false return end
+    local sp, on = Camera:WorldToViewportPoint(t.Position)
+    indicator.Visible = on
+    if on then indicator.Position = Vector2.new(sp.X, sp.Y) end
 end
 
 local function updateESP()
-    for p,o in pairs(espObjects) do
-        local c=o.Character
+    for p, o in pairs(espObjects) do
+        local c = o.Character
         if not c or not c.Parent then removeESP(p) continue end
-        local h=c:FindFirstChildOfClass("Humanoid")
-        local r=c:FindFirstChild("HumanoidRootPart")
-        if not(h and h.Health>0 and r and ESPConfig.Enabled and not(ESPConfig.TeamCheck and p.Team==LocalPlayer.Team)) then
-            for _,c in ipairs(o.corners) do c.Visible=false end
-            o.nameShadow.Visible=false;o.nameText.Visible=false
-            o.tracer.Visible=false;o.healthBg.Visible=false;o.health.Visible=false
+        local h = c:FindFirstChildOfClass("Humanoid")
+        local r = c:FindFirstChild("HumanoidRootPart")
+
+        local isVisible = h and h.Health > 0 and r and ESPConfig.Enabled and not (ESPConfig.TeamCheck and p.Team == LocalPlayer.Team)
+        
+        if not isVisible then
+            for _, corn in ipairs(o.corners) do corn.Visible = false end
+            o.nameShadow.Visible = false; o.nameText.Visible = false
+            o.tracer.Visible = false; o.healthBg.Visible = false; o.health.Visible = false
             continue
         end
-        local sp,on=Camera:WorldToViewportPoint(r.Position)
+
+        local sp, on = Camera:WorldToViewportPoint(r.Position)
+        
         if not on then
-            for _,c in ipairs(o.corners) do c.Visible=false end
-            o.nameShadow.Visible=false;o.nameText.Visible=false
-            o.tracer.Visible=false;o.healthBg.Visible=false;o.health.Visible=false
+            for _, corn in ipairs(o.corners) do corn.Visible = false end
+            o.nameShadow.Visible = false; o.nameText.Visible = false
+            o.tracer.Visible = false; o.healthBg.Visible = false; o.health.Visible = false
             continue
         end
-        local w,hgt=50,100
-        local x,y=sp.X-w/2,sp.Y-hgt/2
-        local cs=ESPConfig.CornerSize
-        local col=(p==GetClosestTarget()) and ESPConfig.ColorTarget or((ESPConfig.TeamCheck and p.Team==LocalPlayer.Team) and ESPConfig.ColorTeam or ESPConfig.ColorEnemy)
+
+        local w, hgt = 50, 100
+        local x, y = sp.X - w / 2, sp.Y - hgt / 2
+        local cs = ESPConfig.CornerSize
+        local col = (p == GetClosestTarget()) and ESPConfig.ColorTarget or ((ESPConfig.TeamCheck and p.Team == LocalPlayer.Team) and ESPConfig.ColorTeam or ESPConfig.ColorEnemy)
+
         if ESPConfig.Boxes then
-            for _,c in ipairs(o.corners) do c.Visible=true;c.Color=col end
-            o.corners[1].From, o.corners[1].To = Vector2.new(x,y),Vector2.new(x+cs,y)
-            o.corners[2].From, o.corners[2].To = Vector2.new(x,y),Vector2.new(x,y+cs)
-            o.corners[3].From, o.corners[3].To = Vector2.new(x+w-cs,y),Vector2.new(x+w,y)
-            o.corners[4].From, o.corners[4].To = Vector2.new(x+w,y),Vector2.new(x+w,y+cs)
-            o.corners[5].From, o.corners[5].To = Vector2.new(x,y+hgt-cs),Vector2.new(x,y+hgt)
-            o.corners[6].From, o.corners[6].To = Vector2.new(x,y+hgt),Vector2.new(x+cs,y+hgt)
-            o.corners[7].From, o.corners[7].To = Vector2.new(x+w-cs,y+hgt),Vector2.new(x+w,y+hgt)
-            o.corners[8].From, o.corners[8].To = Vector2.new(x+w,y+hgt-cs),Vector2.new(x+w,y+hgt)
+            for _, corn in ipairs(o.corners) do corn.Visible = true; corn.Color = col end
+            o.corners[1].From, o.corners[1].To = Vector2.new(x, y), Vector2.new(x + cs, y)
+            o.corners[2].From, o.corners[2].To = Vector2.new(x, y), Vector2.new(x, y + cs)
+            o.corners[3].From, o.corners[3].To = Vector2.new(x + w - cs, y), Vector2.new(x + w, y)
+            o.corners[4].From, o.corners[4].To = Vector2.new(x + w, y), Vector2.new(x + w, y + cs)
+            o.corners[5].From, o.corners[5].To = Vector2.new(x, y + hgt - cs), Vector2.new(x, y + hgt)
+            o.corners[6].From, o.corners[6].To = Vector2.new(x, y + hgt), Vector2.new(x + cs, y + hgt)
+            o.corners[7].From, o.corners[7].To = Vector2.new(x + w - cs, y + hgt), Vector2.new(x + w, y + hgt)
+            o.corners[8].From, o.corners[8].To = Vector2.new(x + w, y + hgt - cs), Vector2.new(x + w, y + hgt)
         else
-            for _,c in ipairs(o.corners) do c.Visible=false end
+            for _, corn in ipairs(o.corners) do corn.Visible = false end
         end
+
         if ESPConfig.Names then
-            o.nameShadow.Visible=true
-            o.nameShadow.Text=p.Name.." ["..math.floor((r.Position-Camera.CFrame.Position).Magnitude).."m]"
-            o.nameShadow.Position=Vector2.new(sp.X+1,sp.Y-hgt/2-8+1)
-            o.nameShadow.Color=Color3.new(0,0,0)
-            o.nameText.Visible=true
-            o.nameText.Text=p.Name.." ["..math.floor((r.Position-Camera.CFrame.Position).Magnitude).."m]"
-            o.nameText.Position=Vector2.new(sp.X,sp.Y-hgt/2-8)
-            o.nameText.Color=col
+            local dist = math.floor((r.Position - Camera.CFrame.Position).Magnitude)
+            local text = p.Name .. " [" .. dist .. "m]"
+            o.nameShadow.Visible = true; o.nameShadow.Text = text
+            o.nameShadow.Position = Vector2.new(sp.X + 1, sp.Y - hgt / 2 - 8 + 1)
+            o.nameShadow.Color = Color3.new(0, 0, 0)
+            o.nameText.Visible = true; o.nameText.Text = text
+            o.nameText.Position = Vector2.new(sp.X, sp.Y - hgt / 2 - 8)
+            o.nameText.Color = col
         else
-            o.nameShadow.Visible=false;o.nameText.Visible=false
+            o.nameShadow.Visible = false; o.nameText.Visible = false
         end
+
         if ESPConfig.Tracers then
-            o.tracer.Visible=true;o.tracer.Thickness=ESPConfig.TracerThickness;o.tracer.Color=col
-            o.tracer.From=Vector2.new(Camera.ViewportSize.X/2,Camera.ViewportSize.Y)
-            o.tracer.To=Vector2.new(sp.X,sp.Y)
+            o.tracer.Visible = true; o.tracer.Thickness = ESPConfig.TracerThickness; o.tracer.Color = col
+            o.tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+            o.tracer.To = Vector2.new(sp.X, sp.Y)
         else
-            o.tracer.Visible=false
+            o.tracer.Visible = false
         end
+
         if ESPConfig.Health then
-            local hr=h.Health/h.MaxHealth
-            o.healthBg.Visible=true;o.healthBg.Color=Color3.new(0.16,0.16,0.16)
-            o.healthBg.Position=Vector2.new(x-6,y);o.healthBg.Size=Vector2.new(4,hgt)
-            o.health.Visible=true;o.health.Color=Color3.fromRGB((1-hr)*255,hr*255,0)
-            o.health.Position=Vector2.new(x-6,y+(1-hr)*hgt);o.health.Size=Vector2.new(4,hgt*hr)
+            local hr = h.Health / h.MaxHealth
+            o.healthBg.Visible = true; o.healthBg.Color = Color3.new(0.16, 0.16, 0.16)
+            o.healthBg.Position = Vector2.new(x - 6, y); o.healthBg.Size = Vector2.new(4, hgt)
+            o.health.Visible = true; o.health.Color = Color3.fromRGB((1 - hr) * 255, hr * 255, 0)
+            o.health.Position = Vector2.new(x - 6, y + (1 - hr) * hgt); o.health.Size = Vector2.new(4, hgt * hr)
         else
-            o.healthBg.Visible=false;o.health.Visible=false
+            o.healthBg.Visible = false; o.health.Visible = false
         end
     end
 end
@@ -326,23 +406,23 @@ RunService.RenderStepped:Connect(function()
     updateESP()
     if Config.AimEnabled then
         UpdateFovCircle()
-        local tgt=GetClosestTarget()
+        local tgt = GetClosestTarget()
         if tgt and tgt.Character then
             AimAtPart(tgt.Character:FindFirstChild(Config.TargetPart))
             UpdateIndicator(tgt.Character:FindFirstChild(Config.TargetPart))
         else
-            indicator.Visible=false
+            indicator.Visible = false
         end
     end
 end)
 
-UserInput.InputBegan:Connect(function(i,gp)
+UserInput.InputBegan:Connect(function(i, gp)
     if gp then return end
-    if i.KeyCode==Enum.KeyCode.E then
-        _G.ScriptActive=false
+    if i.KeyCode == Enum.KeyCode.E then
+        _G.ScriptActive = false
         screenGui:Destroy()
-        fovCircle.Visible=false
-        indicator.Visible=false
+        fovCircle.Visible = false
+        indicator.Visible = false
         for p in pairs(espObjects) do removeESP(p) end
     end
 end)
